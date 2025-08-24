@@ -685,15 +685,15 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             "rell_green": {"name": "Rell Green Salt 2% 30 ml", "price": 450},
             "rell_ultima": {"name": "Rell Ultima Salt 2% 30 ml", "price": 600},
             # Новые товары для одноразок
-            "hqd_neo_x": {"name": "HQD NEO X 25000 тяг", "price": 1200},
-            "hqd_glaze": {"name": "HQD Glaze 12000 тяг", "price": 800},
-            "elfbar_nic_king": {"name": "ELF BAR NIC KING 30000 тяг", "price": 1500},
-            "lost_mary_os": {"name": "Lost Mary OS 25000 тяг", "price": 1300},
-            "plonq_ultra": {"name": "Plonq Ultra 12000 тяг", "price": 900},
-            "plonq_roqy_l": {"name": "Plonq Roqy L 20000 тяг", "price": 1100},
-            "waka_blast": {"name": "WAKA Blast 38000 тяг", "price": 1800},
-            "puffmi_tank": {"name": "PUFFMI TANK 20000 тяг", "price": 1200},
-            "instabar_wt": {"name": "Instabar WT 15000 тяг", "price": 1000},
+            "hqd_neo_x": {"name": "HQD NEO X 25000 тяг", "price": 1600},
+            "hqd_glaze": {"name": "HQD Glaze 12000 тяг", "price": 1350},
+            "elfbar_nic_king": {"name": "ELF BAR NIC KING 30000 тяг", "price": 1400},
+            "lost_mary_os": {"name": "Lost Mary OS 25000 тяг", "price": 1400},
+            "plonq_ultra": {"name": "Plonq Ultra 12000 тяг", "price": 1850},
+            "plonq_roqy_l": {"name": "Plonq Roqy L 20000 тяг", "price": 1700},
+            "waka_blast": {"name": "WAKA Blast 38000 тяг", "price": 1600},
+            "puffmi_tank": {"name": "PUFFMI TANK 20000 тяг", "price": 1650},
+            "instabar_wt": {"name": "Instabar WT 15000 тяг", "price": 800},
             # Новые картриджи
             "plonq_cartridge": {"name": "Картридж PLONQ 3ml 0.4 Ом", "price": 400},
             "vaporesso_cartridge": {"name": "Картридж Vaporesso XROS 3ML 0.4 Ом", "price": 300}
@@ -940,7 +940,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             photo_url = "https://iimg.su/i/nPspGQ"
             await update.message.reply_photo(
                 photo=photo_url,
-                caption="🚬 *HQD NEO X 25000 тяг*\n\nКоличество тяг: 25000\nЦена: *1200 ₽*",
+                caption="🚬 *HQD NEO X 25000 тяг*\n\nКоличество тяг: 25000\nЦена: *1600 ₽*",
                 parse_mode="Markdown",
                 reply_markup=add_to_cart_keyboard("hqd_neo_x")
             )
@@ -949,7 +949,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             photo_url = "https://iimg.su/i/4KJr2t"
             await update.message.reply_photo(
                 photo=photo_url,
-                caption="🚬 *HQD Glaze 12000 тяг*\n\nКоличество тяг: 12000\nЦена: *800 ₽*",
+                caption="🚬 *HQD Glaze 12000 тяг*\n\nКоличество тяг: 12000\nЦена: *1350 ₽*",
                 parse_mode="Markdown",
                 reply_markup=add_to_cart_keyboard("hqd_glaze")
             )
@@ -966,7 +966,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             photo_url = "https://iimg.su/i/QmBAIU"
             await update.message.reply_photo(
                 photo=photo_url,
-                caption="🚬 *ELF BAR NIC KING 30000 тяг*\n\nКоличество тяг: 30000\nЦена: *1500 ₽*",
+                caption="🚬 *ELF BAR NIC KING 30000 тяг*\n\nКоличество тяг: 30000\nЦена: *1400 ₽*",
                 parse_mode="Markdown",
                 reply_markup=add_to_cart_keyboard("elfbar_nic_king")
             )
@@ -983,7 +983,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             photo_url = "https://iimg.su/i/RfstON"
             await update.message.reply_photo(
                 photo=photo_url,
-                caption="🚬 *Lost Mary OS 25000 тяг*\n\nКоличество тяг: 25000\nЦена: *1300 ₽*",
+                caption="🚬 *Lost Mary OS 25000 тяг*\n\nКоличество тяг: 25000\nЦена: *1400 ₽*",
                 parse_mode="Markdown",
                 reply_markup=add_to_cart_keyboard("lost_mary_os")
             )
@@ -1000,7 +1000,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             photo_url = "https://iimg.su/i/sUggA0"
             await update.message.reply_photo(
                 photo=photo_url,
-                caption="🚬 *Plonq Ultra 12000 тяг*\n\nКоличество тяг: 12000\nЦена: *900 ₽*",
+                caption="🚬 *Plonq Ultra 12000 тяг*\n\nКоличество тяг: 12000\nЦена: *1850 ₽*",
                 parse_mode="Markdown",
                 reply_markup=add_to_cart_keyboard("plonq_ultra")
             )
@@ -1009,7 +1009,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             photo_url = "https://iimg.su/i/tMBFds"
             await update.message.reply_photo(
                 photo=photo_url,
-                caption="🚬 *Plonq Roqy L 20000 тяг*\n\nКоличество тяг: 20000\nЦена: *1100 ₽*",
+                caption="🚬 *Plonq Roqy L 20000 тяг*\n\nКоличество тяг: 20000\nЦена: *1700 ₽*",
                 parse_mode="Markdown",
                 reply_markup=add_to_cart_keyboard("plonq_roqy_l")
             )
@@ -1026,7 +1026,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             photo_url = "https://iimg.su/i/DjZBoz"
             await update.message.reply_photo(
                 photo=photo_url,
-                caption="🚬 *WAKA Blast 38000 тяг*\n\nКоличество тяг: 38000\nЦена: *1800 ₽*",
+                caption="🚬 *WAKA Blast 38000 тяг*\n\nКоличество тяг: 38000\nЦена: *1600 ₽*",
                 parse_mode="Markdown",
                 reply_markup=add_to_cart_keyboard("waka_blast")
             )
@@ -1043,7 +1043,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             photo_url = "https://iimg.su/i/t1ibma"
             await update.message.reply_photo(
                 photo=photo_url,
-                caption="🚬 *PUFFMI TANK 20000 тяг*\n\nКоличество тяг: 20000\nЦена: *1200 ₽*",
+                caption="🚬 *PUFFMI TANK 20000 тяг*\n\nКоличество тяг: 20000\nЦена: *1650 ₽*",
                 parse_mode="Markdown",
                 reply_markup=add_to_cart_keyboard("puffmi_tank")
             )
@@ -1060,7 +1060,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             photo_url = "https://iimg.su/i/ebkUPF"
             await update.message.reply_photo(
                 photo=photo_url,
-                caption="🚬 *Instabar WT 15000 тяг*\n\nКоличество тяг: 15000\nЦена: *1000 ₽*",
+                caption="🚬 *Instabar WT 15000 тяг*\n\nКоличество тяг: 15000\nЦена: *800 ₽*",
                 parse_mode="Markdown",
                 reply_markup=add_to_cart_keyboard("instabar_wt")
             )
@@ -1212,4 +1212,5 @@ def main() -> None:
 
 
 if __name__ == '__main__':
+
     main()
