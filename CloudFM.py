@@ -393,17 +393,18 @@ async def show_disposable(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 
 # Функция для показа товаров HUSKY
+# Функция для показа товаров HUSKY
 async def show_husky_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "husky_products"
 
     await update.message.reply_text(
         "💧 *Товары HUSKY:*\n\n"
+        "• HUSKY IMPORT MALAYSIAN SALT (20MG) 30 ml - 400 ₽\n\n"
         "Выберите продукт:",
         reply_markup=husky_products_keyboard(),
         parse_mode="Markdown"
     )
-
 
 # Функция для показа товаров PODONKI
 async def show_podonki_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -411,12 +412,12 @@ async def show_podonki_products(update: Update, context: ContextTypes.DEFAULT_TY
     USER_STATES[user.id] = "podonki_products"
 
     await update.message.reply_text(
-        "💧 *Т товары PODONKI:*\n\n"
+        "💧 *Товары PODONKI:*\n\n"
+        "• PODONKI ARCADE Salt 2% 30 ml - 400 ₽\n\n"
         "Выберите продукт:",
         reply_markup=podonki_products_keyboard(),
         parse_mode="Markdown"
     )
-
 
 # Функция для показа товаров CATSWILL
 async def show_catswill_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -425,11 +426,11 @@ async def show_catswill_products(update: Update, context: ContextTypes.DEFAULT_T
 
     await update.message.reply_text(
         "💧 *Товары CATSWILL:*\n\n"
+        "• CATSWILL Salt 2% 30 ml - 450 ₽\n\n"
         "Выберите продукт:",
         reply_markup=catswill_products_keyboard(),
         parse_mode="Markdown"
     )
-
 
 # Функция для показа товаров MAXWELLS
 async def show_maxwells_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -438,11 +439,11 @@ async def show_maxwells_products(update: Update, context: ContextTypes.DEFAULT_T
 
     await update.message.reply_text(
         "💧 *Товары MAXWELLS:*\n\n"
+        "• MAXWELLS Salt 2% 30 ml - 400 ₽\n\n"
         "Выберите продукт:",
         reply_markup=maxwells_products_keyboard(),
         parse_mode="Markdown"
     )
-
 
 # Функция для показа товаров Rell
 async def show_rell_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -451,97 +452,105 @@ async def show_rell_products(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     await update.message.reply_text(
         "💧 *Товары Rell:*\n\n"
+        "• Rell Green Salt 2% 30 ml - 450 ₽\n"
+        "• Rell Ultima Salt 2% 30 ml - 600 ₽\n\n"
         "Выберите продукт:",
         reply_markup=rell_products_keyboard(),
         parse_mode="Markdown"
     )
 
-
-# НОВЫЕ ФУНКЦИИ ДЛЯ ОДНОРАЗОК
-
+# Функция для показа товаров HQD
 async def show_hqd_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "hqd_products"
 
     await update.message.reply_text(
         "🚬 *Товары HQD:*\n\n"
+        "• HQD NEO X 25000 тяг - 1600 ₽\n"
+        "• HQD Glaze 12000 тяг - 1350 ₽\n\n"
         "Выберите продукт:",
         reply_markup=hqd_products_keyboard(),
         parse_mode="Markdown"
     )
 
-
+# Функция для показа товаров ELF BAR
 async def show_elfbar_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "elfbar_products"
 
     await update.message.reply_text(
         "🚬 *Товары ELF BAR:*\n\n"
+        "• ELF BAR NIC KING 30000 тяг - 1450 ₽\n\n"
         "Выберите продукт:",
         reply_markup=elfbar_products_keyboard(),
         parse_mode="Markdown"
     )
 
-
+# Функция для показа товаров LOST MARY
 async def show_lostmary_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "lostmary_products"
 
     await update.message.reply_text(
         "🚬 *Товары LOST MARY:*\n\n"
+        "• Lost Mary OS 25000 тяг - 1400 ₽\n\n"
         "Выберите продукт:",
         reply_markup=lostmary_products_keyboard(),
         parse_mode="Markdown"
     )
 
-
+# Функция для показа товаров PLONQ
 async def show_plonq_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "plonq_products"
 
     await update.message.reply_text(
         "🚬 *Товары PLONQ:*\n\n"
+        "• Plonq Ultra 12000 тяг - 1850 ₽\n"
+        "• Plonq Roqy L 20000 тяг - 1700 ₽\n\n"
         "Выберите продукт:",
         reply_markup=plonq_products_keyboard(),
         parse_mode="Markdown"
     )
 
-
+# Функция для показа товаров WAKA
 async def show_waka_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "waka_products"
 
     await update.message.reply_text(
         "🚬 *Товары WAKA:*\n\n"
+        "• WAKA Blast 38000 тяг - 1600 ₽\n\n"
         "Выберите продукт:",
         reply_markup=waka_products_keyboard(),
         parse_mode="Markdown"
     )
 
-
+# Функция для показа товаров PUFFMI
 async def show_puffmi_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "puffmi_products"
 
     await update.message.reply_text(
         "🚬 *Товары PUFFMI:*\n\n"
+        "• PUFFMI TANK 20000 тяг - 1650 ₽\n\n"
         "Выберите продукт:",
         reply_markup=puffmi_products_keyboard(),
         parse_mode="Markdown"
     )
 
-
+# Функция для показа товаров INSTABAR
 async def show_instabar_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "instabar_products"
 
     await update.message.reply_text(
         "🚬 *Товары INSTABAR:*\n\n"
+        "• Instabar WT 15000 тяг - 800 ₽\n\n"
         "Выберите продукт:",
         reply_markup=instabar_products_keyboard(),
         parse_mode="Markdown"
     )
-
 
 async def show_snus(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
@@ -586,6 +595,8 @@ async def show_cartridges(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     await update.message.reply_text(
         "🔧 *Картриджы для под-систем:*\n\n"
+        "• PLONQ 3ml 0.4 Ом - 400 ₽\n"
+        "• Vaporesso XROS 3ML 0.4 Ом - 250 ₽\n\n"
         "Выберите продукт:",
         reply_markup=cartridges_keyboard(),
         parse_mode="Markdown"
@@ -763,26 +774,32 @@ async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_
         USER_CURRENT_PRODUCT[user_id] = product_id
         USER_CURRENT_FLAVORS[user_id] = flavors
         
-        # Формируем сообщение со списком вкусов
-        message_text = f"Выберите вкус для {product_name}:\n\n"
+        # Формируем сообщение со списком вкусов и ценой
+        message_text = f"🎯 *{product_name}* - *{price} ₽*\n\n"
+        message_text += "Выберите вкус:\n\n"
         for i, flavor in enumerate(flavors, 1):
             message_text += f"{i}. {flavor}\n"
         
+        message_text += f"\n💵 Цена: *{price} ₽*"
+        
         USER_STATES[user_id] = f"waiting_flavor_{product_id}"
-        await update.message.reply_text(message_text)
+        await update.message.reply_text(message_text, parse_mode="Markdown")
         
     elif product_name in LIQUID_FLAVORS:
         flavors = LIQUID_FLAVORS[product_name]
         USER_CURRENT_PRODUCT[user_id] = product_id
         USER_CURRENT_FLAVORS[user_id] = flavors
         
-        # Формируем сообщение со списком вкусов
-        message_text = f"Выберите вкус для {product_name}:\n\n"
+        # Формируем сообщение со списком вкусов и ценой
+        message_text = f"🎯 *{product_name}* - *{price} ₽*\n\n"
+        message_text += "Выберите вкус:\n\n"
         for i, flavor in enumerate(flavors, 1):
             message_text += f"{i}. {flavor}\n"
         
+        message_text += f"\n💵 Цена: *{price} ₽*"
+        
         USER_STATES[user_id] = f"waiting_flavor_{product_id}"
-        await update.message.reply_text(message_text)
+        await update.message.reply_text(message_text, parse_mode="Markdown")
         
     else:
         # Если у продукта нет вариантов вкуса, добавляем сразу в корзину
@@ -804,7 +821,7 @@ async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_
             })
 
         await update.message.reply_text(
-            f"✅ {product_name} добавлен в корзину!",
+            f"✅ *{product_name}* - *{price} ₽* добавлен в корзину!",
             parse_mode="Markdown"
         )
 
@@ -1326,6 +1343,7 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
 
 
 
