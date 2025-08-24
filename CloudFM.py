@@ -768,6 +768,27 @@ async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_
     user = update.effective_user
     user_id = user.id
     
+    # Словарь с URL изображений для каждого продукта
+    product_images = {
+        "husky_malaysian": "https://iimg.su/i/QxOz3w",
+        "podonki_arcade": "https://iimg.su/i/Bkw383",
+        "catswill": "https://iimg.su/i/J8MdO8",
+        "maxwells": "https://iimg.su/i/3ElcUl",
+        "rell_green": "https://iimg.su/i/0KnwNB",
+        "rell_ultima": "https://iimg.su/i/tZq4Bl",
+        "hqd_neo_x": "https://iimg.su/i/nPspGQ",
+        "hqd_glaze": "https://iimg.su/i/4KJr2t",
+        "elfbar_nic_king": "https://iimg.su/i/Q8bqko",
+        "lost_mary_os": "https://iimg.su/i/IMFhAh",
+        "plonq_ultra": "https://iimg.su/i/sUggA0",
+        "plonq_roqy_l": "https://iimg.su/i/tMBFds",
+        "waka_blast": "https://iimg.su/i/DjZBoz",
+        "puffmi_tank": "https://iimg.su/i/t1ibma",
+        "instabar_wt": "https://iimg.su/i/53MBuB",
+        "plonq_cartridge": "https://iimg.su/i/L8HJGr",
+        "vaporesso_cartridge": "https://iimg.su/i/BGCTN4"
+    }
+    
     # Проверяем, есть ли вкусы у этого продукта
     if product_name in DISPOSABLE_FLAVORS:
         flavors = DISPOSABLE_FLAVORS[product_name]
@@ -783,7 +804,16 @@ async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_
         message_text += f"\n💵 Цена: *{price} ₽*"
         
         USER_STATES[user_id] = f"waiting_flavor_{product_id}"
-        await update.message.reply_text(message_text, parse_mode="Markdown")
+        
+        # Отправляем фото с описанием
+        if product_id in product_images:
+            await update.message.reply_photo(
+                photo=product_images[product_id],
+                caption=message_text,
+                parse_mode="Markdown"
+            )
+        else:
+            await update.message.reply_text(message_text, parse_mode="Markdown")
         
     elif product_name in LIQUID_FLAVORS:
         flavors = LIQUID_FLAVORS[product_name]
@@ -799,7 +829,16 @@ async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_
         message_text += f"\n💵 Цена: *{price} ₽*"
         
         USER_STATES[user_id] = f"waiting_flavor_{product_id}"
-        await update.message.reply_text(message_text, parse_mode="Markdown")
+        
+        # Отправляем фото с описанием
+        if product_id in product_images:
+            await update.message.reply_photo(
+                photo=product_images[product_id],
+                caption=message_text,
+                parse_mode="Markdown"
+            )
+        else:
+            await update.message.reply_text(message_text, parse_mode="Markdown")
         
     else:
         # Если у продукта нет вариантов вкуса, добавляем сразу в корзину
@@ -820,10 +859,18 @@ async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_
                 'quantity': 1
             })
 
-        await update.message.reply_text(
-            f"✅ *{product_name}* - *{price} ₽* добавлен в корзину!",
-            parse_mode="Markdown"
-        )
+        # Отправляем фото при добавлении в корзину
+        if product_id in product_images:
+            await update.message.reply_photo(
+                photo=product_images[product_id],
+                caption=f"✅ *{product_name}* - *{price} ₽* добавлен в корзину!",
+                parse_mode="Markdown"
+            )
+        else:
+            await update.message.reply_text(
+                f"✅ *{product_name}* - *{price} ₽* добавлен в корзину!",
+                parse_mode="Markdown"
+            )
 
 
 # Обработчик инлайн кнопок
@@ -1343,6 +1390,7 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
 
 
 
