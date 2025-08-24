@@ -1,0 +1,9 @@
+● cloudfm-bot.service - CloudFM Telegram Bot
+     Loaded: loaded (/etc/systemd/system/cloudfm-bot.service; enabled; vendor preset: enabled)
+     Active: activating (auto-restart) (Result: exit-code) since Sat 2025-08-23 23:18:52 MSK; 913ms ago
+    Process: 6145 ExecStart=/usr/bin/python3 CloudFM.py [0;1;31m(code=exited, status=2)[0m
+   Main PID: 6145 (code=exited, status=2)
+        CPU: 15ms
+
+Aug 23 23:18:52 5520623-wp68874 systemd[1]: [0;1;39m[0;1;31m[0;1;39mcloudfm-bot.service: Main process exited, code=exited, status=2/INVALIDARGUMENT[0m
+Aug 23 23:18:52 5520623-wp68874 systemd[1]: [0;1;38;5;185m[0;1;39m[0;1;38;5;185mcloudfm-bot.service: Failed with result 'exit-code'.[0m

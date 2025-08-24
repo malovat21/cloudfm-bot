@@ -1,0 +1,143 @@
+2025-08-18 14:49:51,385 - __main__ - INFO - ���������� ������� �������
+2025-08-18 14:49:54,552 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/getMe "HTTP/1.1 200 OK"
+2025-08-18 14:49:54,623 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/deleteWebhook "HTTP/1.1 200 OK"
+2025-08-18 14:49:54,624 - telegram.ext.Application - INFO - Application started
+2025-08-18 14:50:04,837 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/getUpdates "HTTP/1.1 200 OK"
+2025-08-18 14:50:14,910 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/getUpdates "HTTP/1.1 200 OK"
+2025-08-18 14:50:24,983 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/getUpdates "HTTP/1.1 200 OK"
+2025-08-18 14:50:35,055 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/getUpdates "HTTP/1.1 200 OK"
+2025-08-18 14:50:45,126 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/getUpdates "HTTP/1.1 200 OK"
+2025-08-18 14:50:55,197 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/getUpdates "HTTP/1.1 200 OK"
+2025-08-18 14:51:05,270 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/getUpdates "HTTP/1.1 200 OK"
+2025-08-18 14:51:15,342 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/getUpdates "HTTP/1.1 200 OK"
+2025-08-18 14:51:25,415 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/getUpdates "HTTP/1.1 200 OK"
+2025-08-18 14:51:35,487 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/getUpdates "HTTP/1.1 200 OK"
+2025-08-18 14:51:45,563 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/getUpdates "HTTP/1.1 200 OK"
+2025-08-18 14:51:48,797 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE/getUpdates "HTTP/1.1 200 OK"
+2025-08-18 14:51:48,797 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+2025-08-18 14:51:48,797 - telegram.ext.Application - INFO - Application.stop() complete
+2025-08-18 14:51:51,792 - __main__ - INFO - Приложение успешно создано
+2025-08-18 14:51:51,792 - __main__ - INFO - Бот запущен и работает в фоновом режиме
+2025-08-18 14:52:12,475 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 14:52:29,978 - __main__ - INFO - Bot status checked
+2025-08-18 14:53:20,608 - __main__ - INFO - Photo received from 711876728
+2025-08-18 14:54:31,005 - __main__ - INFO - Приложение успешно создано
+2025-08-18 14:54:31,006 - __main__ - INFO - Бот запущен и работает в фоновом режиме
+2025-08-18 15:31:34,447 - __main__ - INFO - Bot status checked
+2025-08-18 15:31:56,228 - __main__ - INFO - User 277645161 started the bot
+2025-08-18 15:33:02,035 - __main__ - INFO - Bot status checked
+2025-08-18 15:33:15,875 - __main__ - INFO - Photo received from 277645161
+2025-08-18 15:33:23,845 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 15:33:23,846 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 15:33:43,673 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 15:43:28,179 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 15:43:28,180 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 15:43:50,593 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 15:44:17,777 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 15:54:50,854 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 15:54:55,365 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 15:56:51,495 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 15:56:58,878 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 16:03:23,408 - __main__ - WARNING - Bot stopped by admin 711876728
+2025-08-18 16:04:18,211 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 16:04:18,211 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 16:04:25,582 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 16:05:38,208 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 16:05:38,208 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 16:07:29,896 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 16:07:29,896 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 16:07:32,592 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 16:20:50,869 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 16:20:50,870 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 16:20:56,250 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 16:21:09,766 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 16:21:15,256 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 16:21:37,949 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 16:22:23,609 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 16:22:43,154 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 16:35:38,825 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 16:35:38,825 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 16:35:59,047 - __main__ - ERROR - Error sending order to admin: Chat not found
+2025-08-18 16:46:07,603 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 16:46:07,603 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 16:46:22,203 - __main__ - INFO - Order sent to admin for user 711876728
+2025-08-18 16:47:20,584 - __main__ - INFO - User 277645161 started the bot
+2025-08-18 16:47:57,650 - __main__ - INFO - Order sent to admin for user 277645161
+2025-08-18 16:58:59,634 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 16:58:59,635 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 17:04:32,975 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 17:10:16,566 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 17:10:16,567 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 17:10:23,004 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 18:12:05,787 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 18:12:05,788 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 18:12:06,847 - __main__ - WARNING - Bot stopped by admin 711876728
+2025-08-18 18:12:39,988 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 18:12:39,989 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 18:12:44,142 - __main__ - INFO - User 711876728 started the bot
+2025-08-18 18:15:06,690 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 18:15:06,691 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 18:16:28,687 - __main__ - INFO - Order sent to admin for user 711876728
+2025-08-18 18:17:19,189 - __main__ - INFO - User 789800147 started the bot
+2025-08-18 18:18:59,484 - __main__ - INFO - Order sent to admin for user 789800147
+2025-08-18 18:31:19,188 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 18:31:19,188 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-18 18:32:07,951 - __main__ - INFO - Order sent to admin 711876728 for user 711876728
+2025-08-18 18:32:08,098 - __main__ - INFO - Order sent to admin 789800147 for user 711876728
+2025-08-18 18:36:40,672 - __main__ - WARNING - Bot stopped by admin 789800147
+2025-08-18 18:37:49,047 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-18 18:37:49,047 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-21 22:13:45,421 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-21 22:13:45,421 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-21 22:13:46,258 - __main__ - INFO - User 789800147 started the bot
+2025-08-21 22:24:26,424 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-21 22:24:26,424 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-21 22:44:13,436 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-21 22:44:13,436 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-21 22:44:16,796 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-21 22:44:16,797 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-21 22:52:41,347 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-21 22:52:41,347 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-21 23:06:20,914 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-21 23:06:20,914 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-21 23:27:12,206 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-21 23:27:12,207 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-21 23:30:02,609 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-21 23:30:02,609 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-21 23:32:23,376 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-21 23:32:23,376 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-21 23:33:09,265 - __main__ - INFO - Order sent to admin 711876728 for user 711876728
+2025-08-21 23:33:09,403 - __main__ - INFO - Order sent to admin 789800147 for user 711876728
+2025-08-23 15:35:22,957 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-23 15:35:22,957 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-23 15:35:33,089 - __main__ - INFO - User 711876728 started the bot
+2025-08-23 15:37:47,378 - __main__ - INFO - Order sent to admin 711876728 for user 711876728
+2025-08-23 15:37:47,566 - __main__ - INFO - Order sent to admin 789800147 for user 711876728
+2025-08-23 16:45:41,120 - __main__ - INFO - User 789800147 started the bot
+2025-08-23 19:53:07,558 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-23 19:53:07,558 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-23 20:19:13,514 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-23 20:19:13,514 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-23 20:21:10,500 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-23 20:21:10,500 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-23 20:22:21,587 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-23 20:22:21,588 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-23 20:23:46,735 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-23 20:23:46,735 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-23 21:03:11,270 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-23 21:03:11,271 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-23 21:29:46,515 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-23 21:29:46,515 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-23 21:45:52,238 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-23 21:45:52,239 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-23 21:46:36,645 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-23 21:46:36,645 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-23 23:08:42,955 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-23 23:08:42,957 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-23 23:25:58,056 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-23 23:25:58,058 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-23 23:29:49,442 - __main__ - INFO - Магазин CloudFM успешно запущен
+2025-08-23 23:29:49,444 - __main__ - INFO - Бот-магазин CloudFM запущен и работает
+2025-08-23 23:29:50,022 - __main__ - INFO - User 789800147 started the bot
+2025-08-24 01:52:11,358 - __main__ - INFO - User 739169422 started the bot
+2025-08-24 01:52:13,736 - __main__ - INFO - User 880999679 started the bot
