@@ -781,6 +781,7 @@ async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 # Функция для обработки выбора вкуса
+# Функция для обработки выбора вкуса
 async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_TYPE, product_id: str, product_name: str, price: int):
     user = update.effective_user
     user_id = user.id
@@ -799,10 +800,19 @@ async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_
         message_text += "\nВведите цифру для выбора вкуса или нажмите '⬅️ Назад к продукту' чтобы вернуться"
         
         USER_STATES[user_id] = f"waiting_flavor_{product_id}"
-        await update.message.reply_text(
-            message_text,
-            reply_markup=flavor_selection_keyboard()
-        )
+        
+        # Отправляем сообщение с выбором вкуса
+        if hasattr(update, 'message'):
+            await update.message.reply_text(
+                message_text,
+                reply_markup=flavor_selection_keyboard()
+            )
+        else:
+            # Если это callback query, редактируем существующее сообщение
+            await update.edit_message_text(
+                message_text,
+                reply_markup=flavor_selection_keyboard()
+            )
         
     elif product_name in LIQUID_FLAVORS:
         flavors = LIQUID_FLAVORS[product_name]
@@ -817,10 +827,19 @@ async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_
         message_text += "\nВведите цифру для выбора вкуса или нажмите '⬅️ Назад к продукту' чтобы вернуться"
         
         USER_STATES[user_id] = f"waiting_flavor_{product_id}"
-        await update.message.reply_text(
-            message_text,
-            reply_markup=flavor_selection_keyboard()
-        )
+        
+        # Отправляем сообщение с выбором вкуса
+        if hasattr(update, 'message'):
+            await update.message.reply_text(
+                message_text,
+                reply_markup=flavor_selection_keyboard()
+            )
+        else:
+            # Если это callback query, редактируем существующее сообщение
+            await update.edit_message_text(
+                message_text,
+                reply_markup=flavor_selection_keyboard()
+            )
         
     else:
         # Если у продукта нет вариантов вкуса, добавляем сразу в корзину
@@ -841,9 +860,18 @@ async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_
                 'quantity': 1
             })
 
-        await update.message.reply_text(
-            f"✅ {product_name} добавлен в корзину!",
-            parse_mode="Markdown"
+        # Отправляем сообщение о добавлении в корзину
+        if hasattr(update, 'message'):
+            await update.message.reply_text(
+                f"✅ {product_name} добавлен в корзину!",
+                parse_mode="Markdown"
+            )
+        else:
+            # Если это callback query, редактируем существующее сообщение
+            await update.edit_message_text(
+                f"✅ {product_name} добавлен в корзину!",
+                parse_mode="Markdown"
+            )  parse_mode="Markdown"
         )
 
 
@@ -1635,4 +1663,5 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
 
