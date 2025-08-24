@@ -889,6 +889,11 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             
             # Вызываем функцию обработки выбора вкуса
             await handle_flavor_selection(update, context, product_id, product_name, price)
+        else:
+            await query.edit_message_caption(
+                caption="❌ Ошибка: продукт не найден",
+                parse_mode="Markdown"
+            )
 
     # Обработка перехода в корзину
     elif query.data == "go_to_cart":
@@ -1630,3 +1635,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
