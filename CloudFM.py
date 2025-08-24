@@ -1270,50 +1270,57 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             await back_to_main(update, context)
 
     # Обработка картриджей
-    elif USER_STATES.get(user_id) == "cartridges":
-        if text == "PLONQ 3ml 0.4 Ом":
-            if user_id not in USER_CARTS:
-                USER_CARTS[user_id] = []
+   # Обработка картриджей
+elif USER_STATES.get(user_id) == "cartridges":
+    if text == "PLONQ 3ml 0.4 Ом":
+        if user_id not in USER_CARTS:
+            USER_CARTS[user_id] = []
 
-            found = False
-            for item in USER_CARTS[user_id]:
-                if item['name'] == "Картридж PLONQ 3ml 0.4 Ом":
-                    item['quantity'] += 1
-                    found = True
-                    break
+        found = False
+        for item in USER_CARTS[user_id]:
+            if item['name'] == "Картридж PLONQ 3ml 0.4 Ом":
+                item['quantity'] += 1
+                found = True
+                break
 
-            if not found:
-                USER_CARTS[user_id].append({
-                    'name': "Картридж PLONQ 3ml 0.4 Ом",
-                    'price': 400,
-                    'quantity': 1
-                })
+        if not found:
+            USER_CARTS[user_id].append({
+                'name': "Картридж PLONQ 3ml 0.4 Ом",
+                'price': 400,
+                'quantity': 1
+            })
 
-            await update.message.reply_text(
-                "✅ Картридж PLONQ 3ml 0.4 Ом добавлен в корзину!",
-                parse_mode="Markdown"
-            )
-        elif text == "Vaporesso XROS 3ML 0.4 Ом":
-            if user_id not in USER_CARTS:
-                USER_CARTS[user_id] = []
+        # Отправляем фото при добавлении в корзину
+        await update.message.reply_photo(
+            photo="https://iimg.su/i/L8HJGr",
+            caption="✅ Картридж PLONQ 3ml 0.4 Ом - 400 ₽ добавлен в корзину!",
+            parse_mode="Markdown"
+        )
+            
+    elif text == "Vaporesso XROS 3ML 0.4 Ом":
+        if user_id not in USER_CARTS:
+            USER_CARTS[user_id] = []
 
-            found = False
-            for item in USER_CARTS[user_id]:
-                if item['name'] == "Картридж Vaporesso XROS 3ML 0.4 Ом":
-                    item['quantity'] += 1
-                    found = True
-                    break
+        found = False
+        for item in USER_CARTS[user_id]:
+            if item['name'] == "Картридж Vaporesso XROS 3ML 0.4 Ом":
+                item['quantity'] += 1
+                found = True
+                break
 
-            if not found:
-                USER_CARTS[user_id].append({
-                    'name': "Картридж Vaporesso XROS 3ML 0.4 Ом",
-                    'price': 250,
-                    'quantity': 1
-                })
+        if not found:
+            USER_CARTS[user_id].append({
+                'name': "Картридж Vaporesso XROS 3ML 0.4 Ом",
+                'price': 250,
+                'quantity': 1
+            })
 
-            await update.message.reply_text(
-                "✅ Картридж Vaporesso XROS 3ML 0.4 Ом добавлен в корзину!",
-                parse_mode="Markdown"
+        # Отправляем фото при добавлении в корзину
+        await update.message.reply_photo(
+            photo="https://iimg.su/i/BGCTN4",
+            caption="✅ Картридж Vaporesso XROS 3ML 0.4 Ом - 250 ₽ добавлен в корзину!",
+            parse_mode="Markdown"
+        )
             )
         elif text == "⬅️ Назад к комплектующим":
             USER_STATES[user_id] = "pod_accessories"
@@ -1390,6 +1397,7 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
 
 
 
