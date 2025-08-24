@@ -963,7 +963,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif USER_STATES.get(user_id) == "elfbar_products":
         if text == "ELF BAR NIC KING 30000 тяг":
             USER_CURRENT_PRODUCT[user_id] = "elfbar_nic_king"
-            photo_url = "https://iimg.su/i/QmBAIU"
+            photo_url = "https://iimg.su/i/Q8bqko"
             await update.message.reply_photo(
                 photo=photo_url,
                 caption="🚬 *ELF BAR NIC KING 30000 тяг*\n\nКоличество тяг: 30000\nЦена: *1400 ₽*",
@@ -980,7 +980,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif USER_STATES.get(user_id) == "lostmary_products":
         if text == "Lost Mary OS 25000 тяг":
             USER_CURRENT_PRODUCT[user_id] = "lost_mary_os"
-            photo_url = "https://iimg.su/i/RfstON"
+            photo_url = "https://iimg.su/i/IMFhAh"
             await update.message.reply_photo(
                 photo=photo_url,
                 caption="🚬 *Lost Mary OS 25000 тяг*\n\nКоличество тяг: 25000\nЦена: *1400 ₽*",
@@ -1057,7 +1057,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif USER_STATES.get(user_id) == "instabar_products":
         if text == "Instabar WT 15000 тяг":
             USER_CURRENT_PRODUCT[user_id] = "instabar_wt"
-            photo_url = "https://iimg.su/i/ebkUPF"
+            photo_url = "https://iimg.su/i/Xhb6a7"
             await update.message.reply_photo(
                 photo=photo_url,
                 caption="🚬 *Instabar WT 15000 тяг*\n\nКоличество тяг: 15000\nЦена: *800 ₽*",
@@ -1214,3 +1214,4 @@ def main() -> None:
 if __name__ == '__main__':
 
     main()
+
