@@ -16,27 +16,6 @@ TOKEN = "8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE"
 ADMIN_IDS = [711876728, 789800147]
 ADMIN_USERNAME = "@malovat21"
 
-# Словарь с фотографиями товаров
-PRODUCT_PHOTOS = {
-    "HQD NEO X 25000 тяг": "https://iimg.su/i/nPspGQ",
-    "HQD Glaze 12000 тяг": "https://iimg.su/i/4KJr2t",
-    "ELF BAR NIC KING 30000 тяг": "https://iimg.su/i/Q8bqko",
-    "Lost Mary OS 25000 тяг": "https://iimg.su/i/IMFhAh",
-    "Plonq Ultra 12000 тяг": "https://iimg.su/i/sUggA0",
-    "Plonq Roqy L 20000 тяг": "https://iimg.su/i/tMBFds",
-    "WAKA Blast 38000 тяг": "https://iimg.su/i/DjZBoz",
-    "PUFFMI TANK 20000 тяг": "https://iimg.su/i/t1ibma",
-    "Instabar WT 15000 тяг": "https://iimg.su/i/53MBuB",
-    "HUSKY IMPORT MALAYSIAN SALT (20MG) 30 ml": "https://iimg.su/i/QxOz3w",
-    "PODONKI ARCADE Salt 2% 30 ml": "https://iimg.su/i/Bkw383",
-    "CATSWILL Salt 2% 30 ml": "https://iimg.su/i/J8MdO8",
-    "MAXWELLS Salt 2% 30 ml": "https://iimg.su/i/3ElcUl",
-    "Rell Green Salt 2% 30 ml": "https://iimg.su/i/0KnwNB",
-    "Rell Ultima Salt 2% 30 ml": "https://iimg.su/i/tZq4Bl",
-    "Картридж PLONQ 3ml 0.4 Ом": "https://iimg.su/i/L8HJGr",
-    "Картридж Vaporesso XROS 3ML 0.4 Ом": "https://iimg.su/i/BGCTN4"
-}
-
 
 # Создаем кастомный обработчик логов с поддержкой UTF-8
 class Utf8FileHandler(logging.FileHandler):
@@ -295,13 +274,6 @@ def add_to_cart_keyboard(product_id):
     ])
 
 
-# Клавиатура для выбора вкуса
-def flavor_selection_keyboard():
-    return ReplyKeyboardMarkup([
-        ["⬅️ Назад к продукту", "🏠 Главное меню"]
-    ], resize_keyboard=True)
-
-
 # Клавиатура для снюса
 def snus_brands_keyboard():
     return ReplyKeyboardMarkup([
@@ -439,7 +411,7 @@ async def show_podonki_products(update: Update, context: ContextTypes.DEFAULT_TY
     USER_STATES[user.id] = "podonki_products"
 
     await update.message.reply_text(
-        "💧 *Товары PODONKI:*\n\n"
+        "💧 *Т товары PODONKI:*\n\n"
         "Выберите продукт:",
         reply_markup=podonki_products_keyboard(),
         parse_mode="Markdown"
@@ -751,7 +723,7 @@ async def edit_order(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         )
         return
 
-    cart_text = "✏️ *Редактирование корзины*\n\n"
+    cart_text = "✏️ *Редактирование корзина*\n\n"
     cart_text += "Отправьте номер товара для удаления:\n\n"
 
     total = 0
@@ -781,7 +753,6 @@ async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 # Функция для обработки выбора вкуса
-# Функция для обработки выбора вкуса
 async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_TYPE, product_id: str, product_name: str, price: int):
     user = update.effective_user
     user_id = user.id
@@ -797,22 +768,8 @@ async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_
         for i, flavor in enumerate(flavors, 1):
             message_text += f"{i}. {flavor}\n"
         
-        message_text += "\nВведите цифру для выбора вкуса или нажмите '⬅️ Назад к продукту' чтобы вернуться"
-        
         USER_STATES[user_id] = f"waiting_flavor_{product_id}"
-        
-        # Отправляем сообщение с выбором вкуса
-        if hasattr(update, 'message'):
-            await update.message.reply_text(
-                message_text,
-                reply_markup=flavor_selection_keyboard()
-            )
-        else:
-            # Если это callback query, редактируем существующее сообщение
-            await update.edit_message_text(
-                message_text,
-                reply_markup=flavor_selection_keyboard()
-            )
+        await update.message.reply_text(message_text)
         
     elif product_name in LIQUID_FLAVORS:
         flavors = LIQUID_FLAVORS[product_name]
@@ -824,22 +781,8 @@ async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_
         for i, flavor in enumerate(flavors, 1):
             message_text += f"{i}. {flavor}\n"
         
-        message_text += "\nВведите цифру для выбора вкуса или нажмите '⬅️ Назад к продукту' чтобы вернуться"
-        
         USER_STATES[user_id] = f"waiting_flavor_{product_id}"
-        
-        # Отправляем сообщение с выбором вкуса
-        if hasattr(update, 'message'):
-            await update.message.reply_text(
-                message_text,
-                reply_markup=flavor_selection_keyboard()
-            )
-        else:
-            # Если это callback query, редактируем существующее сообщение
-            await update.edit_message_text(
-                message_text,
-                reply_markup=flavor_selection_keyboard()
-            )
+        await update.message.reply_text(message_text)
         
     else:
         # Если у продукта нет вариантов вкуса, добавляем сразу в корзину
@@ -860,18 +803,9 @@ async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_
                 'quantity': 1
             })
 
-        # Отправляем сообщение о добавлении в корзину
-        if hasattr(update, 'message'):
-            await update.message.reply_text(
-                f"✅ {product_name} добавлен в корзину!",
-                parse_mode="Markdown"
-            )
-        else:
-            # Если это callback query, редактируем существующее сообщение
-            await update.edit_message_text(
-                f"✅ {product_name} добавлен в корзину!",
-                parse_mode="Markdown"
-            )  parse_mode="Markdown"
+        await update.message.reply_text(
+            f"✅ {product_name} добавлен в корзину!",
+            parse_mode="Markdown"
         )
 
 
@@ -917,11 +851,6 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             
             # Вызываем функцию обработки выбора вкуса
             await handle_flavor_selection(update, context, product_id, product_name, price)
-        else:
-            await query.edit_message_caption(
-                caption="❌ Ошибка: продукт не найден",
-                parse_mode="Markdown"
-            )
 
     # Обработка перехода в корзину
     elif query.data == "go_to_cart":
@@ -969,52 +898,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка выбора вкуса
     current_state = USER_STATES.get(user_id, "")
     if current_state.startswith("waiting_flavor_"):
-        if text == "⬅️ Назад к продукту":
-            # Возвращаемся к предыдущему состоянию (к продукту)
-            product_id = USER_CURRENT_PRODUCT[user_id]
-            
-            # Определяем, к какому меню вернуться
-            if "husky" in product_id:
-                USER_STATES[user_id] = "husky_products"
-                await show_husky_products(update, context)
-            elif "podonki" in product_id:
-                USER_STATES[user_id] = "podonki_products"
-                await show_podonki_products(update, context)
-            elif "catswill" in product_id:
-                USER_STATES[user_id] = "catswill_products"
-                await show_catswill_products(update, context)
-            elif "maxwells" in product_id:
-                USER_STATES[user_id] = "maxwells_products"
-                await show_maxwells_products(update, context)
-            elif "rell_green" in product_id or "rell_ultima" in product_id:
-                USER_STATES[user_id] = "rell_products"
-                await show_rell_products(update, context)
-            elif "hqd" in product_id:
-                USER_STATES[user_id] = "hqd_products"
-                await show_hqd_products(update, context)
-            elif "elfbar" in product_id:
-                USER_STATES[user_id] = "elfbar_products"
-                await show_elfbar_products(update, context)
-            elif "lost_mary" in product_id:
-                USER_STATES[user_id] = "lostmary_products"
-                await show_lostmary_products(update, context)
-            elif "plonq" in product_id:
-                USER_STATES[user_id] = "plonq_products"
-                await show_plonq_products(update, context)
-            elif "waka" in product_id:
-                USER_STATES[user_id] = "waka_products"
-                await show_waka_products(update, context)
-            elif "puffmi" in product_id:
-                USER_STATES[user_id] = "puffmi_products"
-                await show_puffmi_products(update, context)
-            elif "instabar" in product_id:
-                USER_STATES[user_id] = "instabar_products"
-                await show_instabar_products(update, context)
-            return
-        elif text == "🏠 Главное меню":
-            await back_to_main(update, context)
-            return
-        elif text.isdigit():
+        if text.isdigit():
             flavor_index = int(text) - 1
             flavors = USER_CURRENT_FLAVORS.get(user_id, [])
             
@@ -1079,7 +963,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             else:
                 await update.message.reply_text("❌ Неверный номер вкуса. Пожалуйста, выберите цифру из списка.")
         else:
-            await update.message.reply_text("❌ Пожалуйста, введите цифру, соответствующую вкусу, или используйте кнопки навигации.")
+            await update.message.reply_text("❌ Пожалуйста, введите цифру, соответствующую вкусу.")
         return
 
     # Обработка главного меню
@@ -1102,14 +986,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif text == "🌿 Жевательный табак":
         await update.message.reply_text(
             "❌ *Товар отсутствует*\n\n"
-            "К сожалению, жевательный табак временно отсутствует в продаже. "
+            "К сожалению, Жевательный табак временно отсутствует в продаже. "
             "Выберите другие товары из каталога.",
             parse_mode="Markdown",
             reply_markup=back_to_catalog_keyboard()
         )
     elif text == "🔧 Под-системы":
         await update.message.reply_text(
-            "❌ *Товар отсутствует*\n\n"
+            "❌ *товар отсутствует*\n\n"
             "К сожалению, под-системы временно отсутствуют в продаже. "
             "Выберите другие товары из каталога.",
             parse_mode="Markdown",
@@ -1153,24 +1037,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка товаров HUSKY
     elif USER_STATES.get(user_id) == "husky_products":
         if text == "HUSKY IMPORT MALAYSIAN SALT (20MG) 30 ml":
-            product_id = "husky_malaysian"
-            product_name = "HUSKY IMPORT MALAYSIAN SALT (20MG) 30 ml"
-            price = 400
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"💧 *{product_name}*\n\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"💧 *{product_name}*\n\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "husky_malaysian", "HUSKY IMPORT MALAYSIAN SALT (20MG) 30 ml", 400)
         elif text == "⬅️ Назад к жидкостям":
             USER_STATES[user_id] = "liquids_brands"
             await show_liquids(update, context)
@@ -1180,24 +1047,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка товаров PODONKI
     elif USER_STATES.get(user_id) == "podonki_products":
         if text == "PODONKI ARCADE Salt 2% 30 ml":
-            product_id = "podonki_arcade"
-            product_name = "PODONKI ARCADE Salt 2% 30 ml"
-            price = 400
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"💧 *{product_name}*\n\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"💧 *{product_name}*\n\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "podonki_arcade", "PODONKI ARCADE Salt 2% 30 ml", 400)
         elif text == "⬅️ Назад к жидкостям":
             USER_STATES[user_id] = "liquids_brands"
             await show_liquids(update, context)
@@ -1207,24 +1057,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка товаров CATSWILL
     elif USER_STATES.get(user_id) == "catswill_products":
         if text == "CATSWILL Salt 2% 30 ml":
-            product_id = "catswill"
-            product_name = "CATSWILL Salt 2% 30 ml"
-            price = 450
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"💧 *{product_name}*\n\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"💧 *{product_name}*\n\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "catswill", "CATSWILL Salt 2% 30 ml", 450)
         elif text == "⬅️ Назад к жидкостям":
             USER_STATES[user_id] = "liquids_brands"
             await show_liquids(update, context)
@@ -1234,24 +1067,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка товаров MAXWELLS
     elif USER_STATES.get(user_id) == "maxwells_products":
         if text == "MAXWELLS Salt 2% 30 ml":
-            product_id = "maxwells"
-            product_name = "MAXWELLS Salt 2% 30 ml"
-            price = 400
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"💧 *{product_name}*\n\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"💧 *{product_name}*\n\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "maxwells", "MAXWELLS Salt 2% 30 ml", 400)
         elif text == "⬅️ Назад к жидкостям":
             USER_STATES[user_id] = "liquids_brands"
             await show_liquids(update, context)
@@ -1261,43 +1077,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка товаров Rell
     elif USER_STATES.get(user_id) == "rell_products":
         if text == "Rell Green Salt 2% 30 ml":
-            product_id = "rell_green"
-            product_name = "Rell Green Salt 2% 30 ml"
-            price = 450
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"💧 *{product_name}*\n\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"💧 *{product_name}*\n\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "rell_green", "Rell Green Salt 2% 30 ml", 450)
         elif text == "Rell Ultima Salt 2% 30 ml":
-            product_id = "rell_ultima"
-            product_name = "Rell Ultima Salt 2% 30 ml"
-            price = 600
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"💧 *{product_name}*\n\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"💧 *{product_name}*\n\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "rell_ultima", "Rell Ultima Salt 2% 30 ml", 600)
         elif text == "⬅️ Назад к жидкостям":
             USER_STATES[user_id] = "liquids_brands"
             await show_liquids(update, context)
@@ -1307,43 +1089,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка товаров HQD
     elif USER_STATES.get(user_id) == "hqd_products":
         if text == "HQD NEO X 25000 тяг":
-            product_id = "hqd_neo_x"
-            product_name = "HQD NEO X 25000 тяг"
-            price = 1600
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"🚬 *{product_name}*\n\nКоличество тяг: 25000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"🚬 *{product_name}*\n\nКоличество тяг: 25000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "hqd_neo_x", "HQD NEO X 25000 тяг", 1600)
         elif text == "HQD Glaze 12000 тяг":
-            product_id = "hqd_glaze"
-            product_name = "HQD Glaze 12000 тяг"
-            price = 1350
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"🚬 *{product_name}*\n\nКоличество тяг: 12000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"🚬 *{product_name}*\n\nКоличество тяг: 12000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "hqd_glaze", "HQD Glaze 12000 тяг", 1350)
         elif text == "⬅️ Назад к одноразкам":
             USER_STATES[user_id] = "disposable_brands"
             await show_disposable(update, context)
@@ -1353,24 +1101,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка товаров ELF BAR
     elif USER_STATES.get(user_id) == "elfbar_products":
         if text == "ELF BAR NIC KING 30000 тяг":
-            product_id = "elfbar_nic_king"
-            product_name = "ELF BAR NIC KING 30000 тяг"
-            price = 1450
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"🚬 *{product_name}*\n\nКоличество тяг: 30000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"🚬 *{product_name}*\n\nКоличество тяг: 30000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "elfbar_nic_king", "ELF BAR NIC KING 30000 тяг", 1450)
         elif text == "⬅️ Назад к одноразкам":
             USER_STATES[user_id] = "disposable_brands"
             await show_disposable(update, context)
@@ -1380,24 +1111,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка товаров LOST MARY
     elif USER_STATES.get(user_id) == "lostmary_products":
         if text == "Lost Mary OS 25000 тяг":
-            product_id = "lost_mary_os"
-            product_name = "Lost Mary OS 25000 тяг"
-            price = 1400
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"🚬 *{product_name}*\n\nКоличество тяг: 25000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"🚬 *{product_name}*\n\nКоличество тяг: 25000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "lost_mary_os", "Lost Mary OS 25000 тяг", 1400)
         elif text == "⬅️ Назад к одноразкам":
             USER_STATES[user_id] = "disposable_brands"
             await show_disposable(update, context)
@@ -1407,43 +1121,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка товаров PLONQ
     elif USER_STATES.get(user_id) == "plonq_products":
         if text == "Plonq Ultra 12000 тяг":
-            product_id = "plonq_ultra"
-            product_name = "Plonq Ultra 12000 тяг"
-            price = 1850
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"🚬 *{product_name}*\n\nКоличество тяг: 12000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"🚬 *{product_name}*\n\nКоличество тяг: 12000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "plonq_ultra", "Plonq Ultra 12000 тяг", 1850)
         elif text == "Plonq Roqy L 20000 тяг":
-            product_id = "plonq_roqy_l"
-            product_name = "Plonq Roqy L 20000 тяг"
-            price = 1700
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"🚬 *{product_name}*\n\nКоличество тяг: 20000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"🚬 *{product_name}*\n\nКоличество тяг: 20000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "plonq_roqy_l", "Plonq Roqy L 20000 тяг", 1700)
         elif text == "⬅️ Назад к одноразкам":
             USER_STATES[user_id] = "disposable_brands"
             await show_disposable(update, context)
@@ -1453,24 +1133,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка товаров WAKA
     elif USER_STATES.get(user_id) == "waka_products":
         if text == "WAKA Blast 38000 тяг":
-            product_id = "waka_blast"
-            product_name = "WAKA Blast 38000 тяг"
-            price = 1600
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"🚬 *{product_name}*\n\nКоличество тяг: 38000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"🚬 *{product_name}*\n\nКоличество тяг: 38000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "waka_blast", "WAKA Blast 38000 тяг", 1600)
         elif text == "⬅️ Назад к одноразкам":
             USER_STATES[user_id] = "disposable_brands"
             await show_disposable(update, context)
@@ -1480,24 +1143,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка товаров PUFFMI
     elif USER_STATES.get(user_id) == "puffmi_products":
         if text == "PUFFMI TANK 20000 тяг":
-            product_id = "puffmi_tank"
-            product_name = "PUFFMI TANK 20000 тяг"
-            price = 1650
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"🚬 *{product_name}*\n\nКоличество тяг: 20000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"🚬 *{product_name}*\n\nКоличество тяг: 20000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "puffmi_tank", "PUFFMI TANK 20000 тяг", 1650)
         elif text == "⬅️ Назад к одноразкам":
             USER_STATES[user_id] = "disposable_brands"
             await show_disposable(update, context)
@@ -1507,24 +1153,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка товаров INSTABAR
     elif USER_STATES.get(user_id) == "instabar_products":
         if text == "Instabar WT 15000 тяг":
-            product_id = "instabar_wt"
-            product_name = "Instabar WT 15000 тяг"
-            price = 800
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"🚬 *{product_name}*\n\nКоличество тяг: 15000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"🚬 *{product_name}*\n\nКоличество тяг: 15000\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            await handle_flavor_selection(update, context, "instabar_wt", "Instabar WT 15000 тяг", 800)
         elif text == "⬅️ Назад к одноразкам":
             USER_STATES[user_id] = "disposable_brands"
             await show_disposable(update, context)
@@ -1551,43 +1180,49 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Обработка картриджей
     elif USER_STATES.get(user_id) == "cartridges":
         if text == "PLONQ 3ml 0.4 Ом":
-            product_id = "plonq_cartridge"
-            product_name = "Картридж PLONQ 3ml 0.4 Ом"
-            price = 400
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"🔧 *{product_name}*\n\nОбъем: 3ml\nСопротивление: 0.4 Ом\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"🔧 *{product_name}*\n\nОбъем: 3ml\nСопротивление: 0.4 Ом\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            if user_id not in USER_CARTS:
+                USER_CARTS[user_id] = []
+
+            found = False
+            for item in USER_CARTS[user_id]:
+                if item['name'] == "Картридж PLONQ 3ml 0.4 Ом":
+                    item['quantity'] += 1
+                    found = True
+                    break
+
+            if not found:
+                USER_CARTS[user_id].append({
+                    'name': "Картридж PLONQ 3ml 0.4 Ом",
+                    'price': 400,
+                    'quantity': 1
+                })
+
+            await update.message.reply_text(
+                "✅ Картридж PLONQ 3ml 0.4 Ом добавлен в корзину!",
+                parse_mode="Markdown"
+            )
         elif text == "Vaporesso XROS 3ML 0.4 Ом":
-            product_id = "vaporesso_cartridge"
-            product_name = "Картридж Vaporesso XROS 3ML 0.4 Ом"
-            price = 250
-            photo_url = PRODUCT_PHOTOS.get(product_name)
-            
-            if photo_url:
-                await update.message.reply_photo(
-                    photo=photo_url,
-                    caption=f"🔧 *{product_name}*\n\nОбъем: 3ml\nСопротивление: 0.4 Ом\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
-            else:
-                await update.message.reply_text(
-                    f"🔧 *{product_name}*\n\nОбъем: 3ml\nСопротивление: 0.4 Ом\nЦена: *{price} ₽*",
-                    parse_mode="Markdown",
-                    reply_markup=add_to_cart_keyboard(product_id)
-                )
+            if user_id not in USER_CARTS:
+                USER_CARTS[user_id] = []
+
+            found = False
+            for item in USER_CARTS[user_id]:
+                if item['name'] == "Картридж Vaporesso XROS 3ML 0.4 Ом":
+                    item['quantity'] += 1
+                    found = True
+                    break
+
+            if not found:
+                USER_CARTS[user_id].append({
+                    'name': "Картридж Vaporesso XROS 3ML 0.4 Ом",
+                    'price': 250,
+                    'quantity': 1
+                })
+
+            await update.message.reply_text(
+                "✅ Картридж Vaporesso XROS 3ML 0.4 Ом добавлен в корзину!",
+                parse_mode="Markdown"
+            )
         elif text == "⬅️ Назад к комплектующим":
             USER_STATES[user_id] = "pod_accessories"
             await show_pod_accessories(update, context)
@@ -1617,7 +1252,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         if 1 <= item_num <= len(cart):
             removed = cart.pop(item_num - 1)
             await update.message.reply_text(
-                f"❌ Товар '{removed['name']}' удален из корзины",
+                f"❌ Товар '{removed['name']}' удален из корзина",
                 reply_markup=cart_keyboard()
             )
             USER_STATES[user_id] = "cart"
@@ -1663,5 +1298,6 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
 
 
