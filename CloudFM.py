@@ -983,10 +983,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await show_liquids(update, context)
     elif text == "🚬 Одноразки":
         await show_disposable(update, context)
-    elif text == "🌿 Снюс":
+    elif text == "🌿 Жевательный табак":
         await update.message.reply_text(
             "❌ *Товар отсутствует*\n\n"
-            "К сожалению, снюс временно отсутствует в продаже. "
+            "К сожалению, Жевательный табак временно отсутствует в продаже. "
             "Выберите другие товары из каталога.",
             parse_mode="Markdown",
             reply_markup=back_to_catalog_keyboard()
@@ -1298,3 +1298,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
