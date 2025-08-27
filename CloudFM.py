@@ -14,7 +14,7 @@ from telegram.ext import (
 
 # Настройки с вашими данными
 TOKEN = "8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE"
-ADMIN_IDS = [711876728, 789800147]
+ADMIN_IDS = [711876728, 789800147, 7664673453]
 ADMIN_USERNAME = "@malovat21"
 
 
@@ -1488,3 +1488,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
