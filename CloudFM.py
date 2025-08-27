@@ -394,44 +394,11 @@ async def admin_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     if user.id not in ADMIN_IDS:
         await update.message.reply_text("⛔ У вас нет прав для этой команды")
         return
-
-    # Получаем все данные из базы данных
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM users ORDER BY created_at DESC')
-    users = cursor.fetchall()
-    conn.close()
-    
-    if not users:
-        await update.message.reply_text("📭 База данных пуста")
-        return
-    
-    # Формируем сообщение с данными
-    db_text = "📊 *Данные из базы данных:*\n\n"
-    
-    for user in users:
-        user_id, username, first_name, last_name, is_active, created_at = user
-        status = "✅ Активен" if is_active == 1 else "❌ Неактивен"
-        db_text += f"👤 ID: `{user_id}`\n"
-        db_text += f"📛 Имя: {first_name} {last_name}\n"
-        db_text += f"🔗 Юзернейм: @{username if username else 'нет'}\n"
-        db_text += f"📊 Статус: {status}\n"
-        db_text += f"📅 Регистрация: {created_at}\n"
-        db_text += "━━━━━━━━━━━━━━━━━━━━\n"
-    
-    # Отправляем данные частями (из-за ограничения длины в Telegram)
-    if len(db_text) > 4000:
-        parts = [db_text[i:i+4000] for i in range(0, len(db_text), 4000)]
-        for part in parts:
-            await update.message.reply_text(part, parse_mode="Markdown")
-    else:
-        await update.message.reply_text(db_text, parse_mode="Markdown")
     
     help_text = (
         "🛠️ *Команды администратора:*\n\n"
         "/broadcast <текст> - Рассылка сообщения всем пользователям\n"
         "/stats - Статистика бота\n"
-        "/db - Просмотр всей базы данных пользователей\n"  # ← ДОБАВЬТЕ ЭТУ СТРОКУ
         "/stop - Остановить бота\n"
         "/admin_help - Справка по командам админа\n\n"
         f"👑 Администраторы: {', '.join(str(admin_id) for admin_id in ADMIN_IDS)}"
@@ -1528,7 +1495,6 @@ def main() -> None:
     # Регистрация обработчиков команд администратора
     application.add_handler(CommandHandler("broadcast", admin_broadcast))
     application.add_handler(CommandHandler("stats", admin_stats))
-    application.add_handler(CommandHandler("db", admin_db)
     application.add_handler(CommandHandler("admin_help", admin_help))
     application.add_handler(CommandHandler("stop", stop))
 
@@ -1544,4 +1510,3 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
-
