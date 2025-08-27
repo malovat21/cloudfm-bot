@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -105,7 +106,7 @@ LIQUID_FLAVORS = {
     ],
     "CATSWILL Salt 2% 30 ml": [
         "Вишня Персик Мята",
-        "Имбирный Лимонад с Малиной",
+        "Имбирный Лимоден с Малиной",
         "Кислый Малиновый Скитлс",
         "Лимонад Ежевика Сироп",
         "Мамба Кислое Яблоко Киви",
@@ -322,12 +323,109 @@ def cart_keyboard():
     ], resize_keyboard=True)
 
 
+# ---- Функции рассылки для администраторов ----
+
+async def admin_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    if user.id not in ADMIN_IDS:
+        await update.message.reply_text("⛔ У вас нет прав для этой команды")
+        return
+    
+    if not context.args:
+        await update.message.reply_text("❌ Использование: /broadcast <сообщение>")
+        return
+    
+    message = " ".join(context.args)
+    await send_broadcast(context, message)
+    await update.message.reply_text("✅ Рассылка запущена!")
+
+async def admin_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    if user.id not in ADMIN_IDS:
+        await update.message.reply_text("⛔ У вас нет прав для этой команды")
+        return
+    
+    active_users = len(USER_CARTS)
+    active_carts = sum(1 for cart in USER_CARTS.values() if cart)
+    
+    stats_text = f"📊 *Статистика бота:*\n\n"
+    stats_text += f"👥 Пользователей: {active_users}\n"
+    stats_text += f"🛒 Активных корзин: {active_carts}\n"
+    stats_text += f"📝 Состояний пользователей: {len(USER_STATES)}\n"
+    
+    await update.message.reply_text(stats_text, parse_mode="Markdown")
+
+async def admin_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    if user.id not in ADMIN_IDS:
+        await update.message.reply_text("⛔ У вас нет прав для этой команды")
+        return
+    
+    help_text = (
+        "🛠️ *Команды администратора:*\n\n"
+        "/broadcast <текст> - Рассылка сообщения всем пользователям\n"
+        "/stats - Статистика бота\n"
+        "/stop - Остановить бота\n"
+        "/admin_help - Справка по командам админа\n\n"
+        f"👑 Администраторы: {', '.join(str(admin_id) for admin_id in ADMIN_IDS)}"
+    )
+    await update.message.reply_text(help_text, parse_mode="Markdown")
+
+async def send_broadcast(context: ContextTypes.DEFAULT_TYPE, message: str) -> None:
+    success_count = 0
+    fail_count = 0
+    
+    broadcast_text = f"📢 *РАССЫЛКА ОТ АДМИНИСТРАТОРА*\n\n{message}\n\n_Это автоматическое сообщение, пожалуйста, не отвечайте на него._"
+    
+    if not USER_CARTS:
+        for admin_id in ADMIN_IDS:
+            await context.bot.send_message(
+                chat_id=admin_id,
+                text="❌ Нет пользователей для рассылки",
+                parse_mode="Markdown"
+            )
+        return
+    
+    for user_id in USER_CARTS.keys():
+        try:
+            await context.bot.send_message(
+                chat_id=user_id,
+                text=broadcast_text,
+                parse_mode="Markdown"
+            )
+            success_count += 1
+            # Небольшая задержка чтобы не превысить лимиты Telegram
+            await asyncio.sleep(0.1)
+        except Exception as e:
+            logger.error(f"Ошибка отправки рассылки пользователю {user_id}: {e}")
+            fail_count += 1
+    
+    # Отправляем отчет админам
+    report_text = (
+        f"📊 *Отчет о рассылке:*\n\n"
+        f"✅ Успешно отправлено: {success_count}\n"
+        f"❌ Не удалось отправить: {fail_count}\n"
+        f"👥 Всего пользователей: {len(USER_CARTS)}\n"
+        f"📝 Сообщение: {message[:100]}..."
+    )
+    
+    for admin_id in ADMIN_IDS:
+        try:
+            await context.bot.send_message(
+                chat_id=admin_id,
+                text=report_text,
+                parse_mode="Markdown"
+            )
+        except Exception as e:
+            logger.error(f"Ошибка отправки отчета админу {admin_id}: {e}")
+
 # ---- Основные функции магазина ----
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "main_menu"
-    USER_CARTS[user.id] = []
+    if user.id not in USER_CARTS:
+        USER_CARTS[user.id] = []
 
     await update.message.reply_text(
         f"👋 Добро пожаловать в *CloudFM*, {user.first_name}!\n\n"
@@ -392,7 +490,6 @@ async def show_disposable(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     )
 
 
-# Функция для показа товаров HUSKY
 # Функция для показа товаров HUSKY
 async def show_husky_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
@@ -539,7 +636,7 @@ async def show_puffmi_products(update: Update, context: ContextTypes.DEFAULT_TYP
         parse_mode="Markdown"
     )
 
-# Функция для показа товаров INSTABAR
+# Функция для показа товары INSTABAR
 async def show_instabar_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "instabar_products"
@@ -667,7 +764,7 @@ async def contacts(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "📞 *Контакты магазина CloudFM*\n\n"
         "• Телеграм: @CloudFMMSC\n"
         "Часы работы: 24/7\n\n"
-        "По вопросам оптовых закупок: @CloudFMMSC"
+        "По вопросам оптовых закупов: @CloudFMMSC"
     )
     await update.message.reply_text(contact_info, parse_mode="Markdown")
 
@@ -1054,9 +1151,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             await update.message.reply_text("❌ Пожалуйста, введите цифру, соответствующую вкусу, или используйте кнопки навигации.")
         return
 
-    # Остальная часть функции остается без изменений...
-    # [ЗДЕСЬ ДОЛЖНА БЫТЬ ОСТАЛЬНАЯ ЧАСТЬ ВАШЕЙ ФУНКЦИИ handle_message]
-
     # Обработка главного меню
     if text == "🛒 Каталог":
         await show_catalog(update, context)
@@ -1371,9 +1465,14 @@ def main() -> None:
         logger.error(f"Ошибка при создании приложения: {e}")
         return
 
-    # Регистрация обработчиков команд
+    # Регистрация обработчиков команд пользователя
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
+    
+    # Регистрация обработчиков команд администратора
+    application.add_handler(CommandHandler("broadcast", admin_broadcast))
+    application.add_handler(CommandHandler("stats", admin_stats))
+    application.add_handler(CommandHandler("admin_help", admin_help))
     application.add_handler(CommandHandler("stop", stop))
 
     # Регистрация обработчика инлайн кнопок
@@ -1389,11 +1488,3 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-
