@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import sqlite3
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -8,21 +9,65 @@ from telegram.ext import (
     ContextTypes,
     filters,
     CallbackContext,
-    CallbackQueryHandler
+    CallbackQueryHandler,
+    PersistenceInput,
+    PicklePersistence
 )
-
 
 # Настройки с вашими данными
 TOKEN = "8013532862:AAGG6ywOEfm7s6XgFJPBevxjIjmW_cZ8wZE"
 ADMIN_IDS = [711876728, 789800147, 7664673453]
 ADMIN_USERNAME = "@malovat21"
 
+# Инициализация базы данных
+def init_database():
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            user_id INTEGER PRIMARY KEY,
+            username TEXT,
+            first_name TEXT,
+            last_name TEXT,
+            is_active INTEGER DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+# Функция для добавления/обновления пользователя
+def add_user(user_id, username, first_name, last_name):
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT OR REPLACE INTO users (user_id, username, first_name, last_name, is_active)
+        VALUES (?, ?, ?, ?, 1)
+    ''', (user_id, username, first_name, last_name))
+    conn.commit()
+    conn.close()
+
+# Функция для получения всех активных пользователей
+def get_all_users():
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT user_id FROM users WHERE is_active = 1')
+    users = [row[0] for row in cursor.fetchall()]
+    conn.close()
+    return users
+
+# Функция для деактивации пользователя
+def deactivate_user(user_id):
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute('UPDATE users SET is_active = 0 WHERE user_id = ?', (user_id,))
+    conn.commit()
+    conn.close()
 
 # Создаем кастомный обработчик логов с поддержкой UTF-8
 class Utf8FileHandler(logging.FileHandler):
     def __init__(self, filename, mode='a', encoding='utf-8', delay=False):
         super().__init__(filename, mode, encoding, delay)
-
 
 # Настройка логгирования
 logger = logging.getLogger(__name__)
@@ -142,7 +187,6 @@ def main_menu_keyboard():
         ["📞 Контакты"]
     ], resize_keyboard=True)
 
-
 def catalog_menu_keyboard():
     return ReplyKeyboardMarkup([
         ["💧 Жидкости", "🚬 Одноразки"],
@@ -150,7 +194,6 @@ def catalog_menu_keyboard():
         ["⚙️ Комплектующие для под-систем"],
         ["🏠 Главное меню"]
     ], resize_keyboard=True)
-
 
 # Клавиатура для жидкостей
 def liquids_brands_keyboard():
@@ -160,14 +203,12 @@ def liquids_brands_keyboard():
         ["⬅️ Назад в каталог", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
-
 # Клавиатура для товаров HUSKY
 def husky_products_keyboard():
     return ReplyKeyboardMarkup([
         ["HUSKY IMPORT MALAYSIAN SALT (20MG) 30 ml"],
         ["⬅️ Назад к жидкостям", "🏠 Главное меню"]
     ], resize_keyboard=True)
-
 
 # Клавиатура для товаров PODONKI
 def podonki_products_keyboard():
@@ -176,14 +217,12 @@ def podonki_products_keyboard():
         ["⬅️ Назад к жидкостям", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
-
 # Клавиатура для товаров CATSWILL
 def catswill_products_keyboard():
     return ReplyKeyboardMarkup([
         ["CATSWILL Salt 2% 30 ml"],
         ["⬅️ Назад к жидкостям", "🏠 Главное меню"]
     ], resize_keyboard=True)
-
 
 # Клавиатура для товаров MAXWELLS
 def maxwells_products_keyboard():
@@ -192,14 +231,12 @@ def maxwells_products_keyboard():
         ["⬅️ Назад к жидкостям", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
-
 # Клавиатура для товаров Rell
 def rell_products_keyboard():
     return ReplyKeyboardMarkup([
         ["Rell Green Salt 2% 30 ml", "Rell Ultima Salt 2% 30 ml"],
         ["⬅️ Назад к жидкостям", "🏠 Главное меню"]
     ], resize_keyboard=True)
-
 
 # ОБНОВЛЕНО: Клавиатура для одноразок с новыми брендами
 def disposable_brands_keyboard():
@@ -210,14 +247,12 @@ def disposable_brands_keyboard():
         ["⬅️ Назад в каталог", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
-
 # Клавиатура для товаров HQD
 def hqd_products_keyboard():
     return ReplyKeyboardMarkup([
         ["HQD NEO X 25000 тяг", "HQD Glaze 12000 тяг"],
         ["⬅️ Назад к одноразкам", "🏠 Главное меню"]
     ], resize_keyboard=True)
-
 
 # Клавиатура для товаров ELF BAR
 def elfbar_products_keyboard():
@@ -226,14 +261,12 @@ def elfbar_products_keyboard():
         ["⬅️ Назад к одноразкам", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
-
 # Клавиатура для товаров LOST MARY
 def lostmary_products_keyboard():
     return ReplyKeyboardMarkup([
         ["Lost Mary OS 25000 тяг"],
         ["⬅️ Назад к одноразкам", "🏠 Главное меню"]
     ], resize_keyboard=True)
-
 
 # Клавиатура для товаров PLONQ
 def plonq_products_keyboard():
@@ -242,14 +275,12 @@ def plonq_products_keyboard():
         ["⬅️ Назад к одноразкам", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
-
 # Клавиатура для товаров WAKA
 def waka_products_keyboard():
     return ReplyKeyboardMarkup([
         ["WAKA Blast 38000 тяг"],
         ["⬅️ Назад к одноразкам", "🏠 Главное меню"]
     ], resize_keyboard=True)
-
 
 # Клавиатура для товаров PUFFMI
 def puffmi_products_keyboard():
@@ -258,7 +289,6 @@ def puffmi_products_keyboard():
         ["⬅️ Назад к одноразкам", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
-
 # Клавиатура для товаров INSTABAR
 def instabar_products_keyboard():
     return ReplyKeyboardMarkup([
@@ -266,14 +296,12 @@ def instabar_products_keyboard():
         ["⬅️ Назад к одноразкам", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
-
 # Инлайн клавиатура для добавления в корзину
 def add_to_cart_keyboard(product_id):
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("➕ Добавить в корзину", callback_data=f"add_{product_id}")],
         [InlineKeyboardButton("🛒 Перейти в корзину", callback_data="go_to_cart")]
     ])
-
 
 # Клавиатура для снюса
 def snus_brands_keyboard():
@@ -284,7 +312,6 @@ def snus_brands_keyboard():
         ["⬅️ Назад в каталог", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
-
 # Клавиатура для под-систем
 def pod_systems_keyboard():
     return ReplyKeyboardMarkup([
@@ -293,14 +320,12 @@ def pod_systems_keyboard():
         ["⬅️ Назад в каталог", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
-
 # Клавиатура для комплектующих
 def pod_accessories_keyboard():
     return ReplyKeyboardMarkup([
         ["Испарители", "Картриджы"],
         ["⬅️ Назад в каталог", "🏠 Главное меню"]
     ], resize_keyboard=True)
-
 
 # Клавиатура для картриджей
 def cartridges_keyboard():
@@ -309,19 +334,16 @@ def cartridges_keyboard():
         ["⬅️ Назад к комплектующим", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
-
 def back_to_catalog_keyboard():
     return ReplyKeyboardMarkup([
         ["⬅️ Назад в каталог", "🏠 Главное меню"]
     ], resize_keyboard=True)
-
 
 def cart_keyboard():
     return ReplyKeyboardMarkup([
         ["✅ Отправить заказ", "✏️ Редактировать заказ"],
         ["⬅️ Назад в каталог", "🏠 Главное меню"]
     ], resize_keyboard=True)
-
 
 # ---- Функции рассылки для администраторов ----
 
@@ -345,11 +367,23 @@ async def admin_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         await update.message.reply_text("⛔ У вас нет прав для этой команды")
         return
     
+    # Получаем статистику из базы данных
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT COUNT(*) FROM users WHERE is_active = 1')
+    total_users = cursor.fetchone()[0]
+    
+    cursor.execute('SELECT COUNT(*) FROM users WHERE DATE(created_at) = DATE("now")')
+    new_today = cursor.fetchone()[0]
+    conn.close()
+    
     active_users = len(USER_CARTS)
     active_carts = sum(1 for cart in USER_CARTS.values() if cart)
     
     stats_text = f"📊 *Статистика бота:*\n\n"
-    stats_text += f"👥 Пользователей: {active_users}\n"
+    stats_text += f"👥 Всего пользователей: {total_users}\n"
+    stats_text += f"📈 Новых сегодня: {new_today}\n"
+    stats_text += f"🔥 Активных сессий: {active_users}\n"
     stats_text += f"🛒 Активных корзин: {active_carts}\n"
     stats_text += f"📝 Состояний пользователей: {len(USER_STATES)}\n"
     
@@ -377,7 +411,10 @@ async def send_broadcast(context: ContextTypes.DEFAULT_TYPE, message: str) -> No
     
     broadcast_text = f"📢 *РАССЫЛКА ОТ АДМИНИСТРАТОРА*\n\n{message}\n\n_Это автоматическое сообщение, пожалуйста, не отвечайте на него._"
     
-    if not USER_CARTS:
+    # Получаем всех пользователей из базы данных
+    user_ids = get_all_users()
+    
+    if not user_ids:
         for admin_id in ADMIN_IDS:
             await context.bot.send_message(
                 chat_id=admin_id,
@@ -386,7 +423,7 @@ async def send_broadcast(context: ContextTypes.DEFAULT_TYPE, message: str) -> No
             )
         return
     
-    for user_id in USER_CARTS.keys():
+    for user_id in user_ids:
         try:
             await context.bot.send_message(
                 chat_id=user_id,
@@ -398,6 +435,8 @@ async def send_broadcast(context: ContextTypes.DEFAULT_TYPE, message: str) -> No
             await asyncio.sleep(0.1)
         except Exception as e:
             logger.error(f"Ошибка отправки рассылки пользователю {user_id}: {e}")
+            # Деактивируем пользователя, если сообщение не доставляется
+            deactivate_user(user_id)
             fail_count += 1
     
     # Отправляем отчет админам
@@ -405,7 +444,7 @@ async def send_broadcast(context: ContextTypes.DEFAULT_TYPE, message: str) -> No
         f"📊 *Отчет о рассылке:*\n\n"
         f"✅ Успешно отправлено: {success_count}\n"
         f"❌ Не удалось отправить: {fail_count}\n"
-        f"👥 Всего пользователей: {len(USER_CARTS)}\n"
+        f"👥 Всего пользователей в базе: {len(user_ids)}\n"
         f"📝 Сообщение: {message[:100]}..."
     )
     
@@ -427,6 +466,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if user.id not in USER_CARTS:
         USER_CARTS[user.id] = []
 
+    # Сохраняем пользователя в базу данных
+    add_user(user.id, user.username, user.first_name, user.last_name)
+
     await update.message.reply_text(
         f"👋 Добро пожаловать в *CloudFM*, {user.first_name}!\n\n"
         "Мы предлагаем лучшие товары для вейпинга с быстрой доставкой!\n"
@@ -436,7 +478,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
     logger.info(f"User {user.id} started the bot")
 
-
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         "📖 *Справка по магазину CloudFM*\n\n"
@@ -444,11 +485,10 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         "- 🛒 *Каталог* - просмотреть товары\n"
         "- 🛍️ *Корзина* - посмотреть ваши заказы\n"
         "- 🚚 *Доставка* - узнать условия доставки\n"
-        "- 📞 *Контакты* - связаться с нами\n"
+        "- 📞 *Контакта* - связаться с нами\n"
         "- /start - Вернуться в главное меню",
         parse_mode="Markdown"
     )
-
 
 async def show_catalog(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
@@ -465,7 +505,6 @@ async def show_catalog(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         parse_mode="Markdown"
     )
 
-
 async def show_liquids(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "liquids_brands"
@@ -475,7 +514,6 @@ async def show_liquids(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         reply_markup=liquids_brands_keyboard(),
         parse_mode="Markdown"
     )
-
 
 # Функция для отображения одноразок
 async def show_disposable(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -488,7 +526,6 @@ async def show_disposable(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         reply_markup=disposable_brands_keyboard(),
         parse_mode="Markdown"
     )
-
 
 # Функция для показа товаров HUSKY
 async def show_husky_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -660,7 +697,6 @@ async def show_snus(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         parse_mode="Markdown"
     )
 
-
 async def show_pod_systems(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "pod_systems"
@@ -672,7 +708,6 @@ async def show_pod_systems(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         parse_mode="Markdown"
     )
 
-
 async def show_pod_accessories(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "pod_accessories"
@@ -683,7 +718,6 @@ async def show_pod_accessories(update: Update, context: ContextTypes.DEFAULT_TYP
         reply_markup=pod_accessories_keyboard(),
         parse_mode="Markdown"
     )
-
 
 # Функция для показа картриджей
 async def show_cartridges(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -699,22 +733,17 @@ async def show_cartridges(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         parse_mode="Markdown"
     )
 
-
 async def back_to_liquids(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await show_liquids(update, context)
-
 
 async def back_to_disposable(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await show_disposable(update, context)
 
-
 async def back_to_accessories(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await show_pod_accessories(update, context)
 
-
 async def back_to_catalog(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await show_catalog(update, context)
-
 
 async def back_to_main(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
@@ -724,7 +753,6 @@ async def back_to_main(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         "🏠 Возвращаемся в главное меню",
         reply_markup=main_menu_keyboard()
     )
-
 
 async def show_cart(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
@@ -747,7 +775,6 @@ async def show_cart(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         parse_mode="Markdown"
     )
 
-
 async def delivery_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     info = (
         "🚚 *Условия доставки CloudFM*\n\n"
@@ -758,7 +785,6 @@ async def delivery_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     )
     await update.message.reply_text(info, parse_mode="Markdown")
 
-
 async def contacts(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     contact_info = (
         "📞 *Контакты магазина CloudFM*\n\n"
@@ -767,7 +793,6 @@ async def contacts(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "По вопросам оптовых закупов: @CloudFMMSC"
     )
     await update.message.reply_text(contact_info, parse_mode="Markdown")
-
 
 async def send_order(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
@@ -817,7 +842,6 @@ async def send_order(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
             "⚠️ Произошла ошибка при отправке заказа. Пожалуйста, свяжитесь с нами через меню Контакты."
         )
 
-
 async def edit_order(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     cart = USER_CARTS.get(user.id, [])
@@ -847,7 +871,6 @@ async def edit_order(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         parse_mode="Markdown"
     )
 
-
 async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     if user.id in ADMIN_IDS:
@@ -857,7 +880,6 @@ async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     else:
         await update.message.reply_text("⛔ У вас нет прав для этой команды")
         logger.warning(f"Unauthorized stop attempt by {user.id}")
-
 
 # Функция для обработки выбора вкуса
 async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_TYPE, product_id: str, product_name: str, price: int):
@@ -968,7 +990,6 @@ async def handle_flavor_selection(update: Update, context: ContextTypes.DEFAULT_
                 parse_mode="Markdown"
             )
 
-
 # Обработчик инлайн кнопок
 async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
@@ -1016,7 +1037,6 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
     elif query.data == "go_to_cart":
         await show_cart_from_query(update, context)
 
-
 async def show_cart_from_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     user = update.effective_user
@@ -1046,7 +1066,6 @@ async def show_cart_from_query(update: Update, context: ContextTypes.DEFAULT_TYP
         text="Выберите действие:",
         reply_markup=cart_keyboard()
     )
-
 
 # ---- Обработчики сообщений ----
 
@@ -1454,12 +1473,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             "Я не понял ваше сообщение. Пожалуйста, используйте кнопки меню или команду /start"
         )
 
-
 # ---- Основная функция ----
 
 def main() -> None:
+    # Инициализируем базу данных
+    init_database()
+    
     try:
-        application = Application.builder().token(TOKEN).build()
+        # Используем сохранение состояния между перезапусками
+        persistence = PicklePersistence(filepath="bot_persistence")
+        application = Application.builder().token(TOKEN).persistence(persistence).build()
         logger.info("Магазин CloudFM успешно запущен")
     except Exception as e:
         logger.error(f"Ошибка при создании приложения: {e}")
@@ -1485,7 +1508,5 @@ def main() -> None:
     logger.info("Бот-магазин CloudFM запущен и работает")
     application.run_polling()
 
-
 if __name__ == '__main__':
     main()
-
