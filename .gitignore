@@ -1,0 +1,26 @@
+# Файлы базы данных
+*.db
+users.db
+
+# Логи
+*.log
+bot.log
+
+# Backup файлы
+*.backup
+
+# Persistence данные бота
+bot_persistence/
+
+# Питон
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Временные файлы
+*.tmp
+*.temp
+
+# CSV файлы (если хотите их игнорировать)
+# *.csv
