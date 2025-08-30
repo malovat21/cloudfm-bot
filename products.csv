@@ -15,4 +15,5 @@ category,subcategory,brand,product_id,name,price,image_url,has_flavors
 Жидкости,Rell,Rell,rell_ultima,"Rell Ultima Salt 2% 30 ml",600,https://iimg.su/i/tZq4Bl,True
 Комплектующие,Картриджи,PLONQ,plonq_cartridge,"Картридж PLONQ 3ml 0.4 Ом",400,https://iimg.su/i/L8HJGr,False
 Комплектующие,Картриджи,Vaporesso,vaporesso_cartridge,"Картридж Vaporesso XROS 3ML 0.4 Ом",250,https://iimg.su/i/BGCTN4,False
+Одноразки,WAKA,WAKA,waka_blast,"WAKA Blast 38000 тяг",1600,https://iimg.su/i/DjZBoz,True
 
