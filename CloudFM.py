@@ -357,7 +357,11 @@ async def admin_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await update.message.reply_text("❌ Использование: /broadcast <сообщение>")
         return
     
-    message = " ".join(context.args)
+    # Сохраняем оригинальное сообщение с переносами строк
+    message = update.message.text
+    # Удаляем команду "/broadcast " из начала сообщения
+    message = message.replace('/broadcast ', '', 1).strip()
+    
     await send_broadcast(context, message)
     await update.message.reply_text("✅ Рассылка запущена!")
 
@@ -1515,4 +1519,5 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
 
