@@ -1,5 +1,52 @@
 product_id,flavor_name
-test_husky,Тестовый вкус 1
-test_husky,Тестовый вкус 2
-test_podonki,Тестовый вкус 3
-test_hqd,Тестовый вкус 4
+hqd_neo_x,Киви маракуйя гуава
+hqd_neo_x,Малина лимон арбуз
+hqd_glaze,Виноград Малина
+hqd_glaze,Черная смородина
+hqd_glaze,Черника
+elfbar_nic_king,Арбуз Вишня
+elfbar_nic_king,Виноград Клюква
+elfbar_nic_king,Черника Малина лёд
+lost_mary_os,Ананас Апельсин
+lost_mary_os,Вишня Малина Лайм
+lost_mary_ос,Кислый виноград лёд
+plonq_ultra,Виноград
+plonq_ultra,Голубика Малина
+plonq_ultra,Клубника Манго
+plonq_ultra,Смородина
+plonq_roqy_l,Вишня Черника Клюква
+plonq_roqy_l,Кислое Киви Маракуйя
+plonq_roqy_l,Сакура Виноград
+waka_blast,Лимон Лайм + Ментол микс
+puffmi_tank,Blueberry ice - Черничный лёд
+puffmi_tank,Pomegranate Lime - Гранат Лайм
+instabar_wt,Сакура Виноград
+instabar_wt,Ананас Кокос
+instabar_wt,Арбузный Коктейль
+instabar_wt,Вишня Персик Лимон
+husky_malaysian,Gum Wolf (Арбузная жвачка)
+husky_malaysian,Sour Beast (Киви, клубника и перечная мята)
+podonki_arcade,Виноград Ежевика
+podonki_arcade,Вишневый энергетик
+podonki_arcade,Лимонад Голубика
+podonki_arcade,Манго Маракуйя
+podonki_arcade,Цитрусовый Микс
+catswill,Вишня Персик Мята
+catswill,Имбирный Лимоден с Малиной
+catswill,Кислый Малиновый Скитлс
+catswill,Лимонад Ежевика Сироп
+catswill,Мамба Кислое Яблоко Киви
+catswill,Скитлс из Винограда Изабеллы
+maxwells,Алтай
+maxwells,Ягодный Мармелад
+maxwells,Зеленый чай с ягодами
+rell_green,Grapefruit (Грейпфрут)
+rell_green,Nord Ice Nectarine (Северный Нектарин)
+rell_green,Papaya Banana (Папайя с Бананом)
+rell_green,Passion Citrus (Цитрус Маракуйя)
+rell_green,Pineapple Lemon (Ананас Лимон)
+rell_green,Tropical Smoothie (Тропический Смузи)
+rell_ultima,Jasmine Raspberry (Жасмин Малина)
+rell_ultima,Kiwi Guava (Киви Гуава)
+rell_ultima,Peach Grape (Персик Виноград)
+rell_ultima,Peach Tea (Персиковый чай)
