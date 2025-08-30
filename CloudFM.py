@@ -166,6 +166,30 @@ def liquids_brands_keyboard():
     keyboard.append(["⬅️ Назад в каталог", "🏠 Главное меню"])
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
+def liquids_brands_keyboard():
+    # Динамически получаем бренды жидкостей из CSV
+    brands = set()
+    for product in PRODUCTS_DATA:
+        if product['category'] == 'Жидкости':
+            brands.add(product['brand'])
+    
+    # Сортируем бренды и ограничиваем по 3 в ряду
+    sorted_brands = sorted(brands)
+    keyboard = []
+    row = []
+    
+    for i, brand in enumerate(sorted_brands):
+        row.append(brand)
+        # Максимум 3 кнопки в ряду
+        if len(row) == 3 or i == len(sorted_brands) - 1:
+            keyboard.append(row)
+            row = []
+    
+    # Всегда добавляем кнопки навигации в отдельный ряд
+    keyboard.append(["⬅️ Назад в каталог", "🏠 Главное меню"])
+    
+    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+
 def disposable_brands_keyboard():
     # Динамически получаем бренды одноразок из CSV
     brands = set()
@@ -173,15 +197,21 @@ def disposable_brands_keyboard():
         if product['category'] == 'Одноразки':
             brands.add(product['brand'])
     
+    # Сортируем бренды и ограничиваем по 3 в ряду
+    sorted_brands = sorted(brands)
     keyboard = []
     row = []
-    for i, brand in enumerate(sorted(brands)):
+    
+    for i, brand in enumerate(sorted_brands):
         row.append(brand)
-        if len(row) == 2 or i == len(brands) - 1:
+        # Максимум 3 кнопки в ряду
+        if len(row) == 3 or i == len(sorted_brands) - 1:
             keyboard.append(row)
             row = []
     
+    # Всегда добавляем кнопки навигации в отдельный ряд
     keyboard.append(["⬅️ Назад в каталог", "🏠 Главное меню"])
+    
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
 def get_products_keyboard(category, brand):
@@ -193,6 +223,8 @@ def get_products_keyboard(category, brand):
     
     keyboard = []
     row = []
+    
+    # Максимум 2 товара в ряду (так лучше смотрится)
     for i, product in enumerate(products):
         row.append(product)
         if len(row) == 2 or i == len(products) - 1:
@@ -201,6 +233,7 @@ def get_products_keyboard(category, brand):
     
     back_text = "⬅️ Назад к жидкостям" if category == "Жидкости" else "⬅️ Назад к одноразкам"
     keyboard.append([back_text, "🏠 Главное меню"])
+    
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
 def back_to_catalog_keyboard():
@@ -1048,3 +1081,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
