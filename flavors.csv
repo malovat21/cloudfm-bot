@@ -1,13 +1,11 @@
 product_id,flavor_name
 hqd_neo_x,Киви маракуйя гуава
-hqd_neo_x,Малина лимон арбуз
 hqd_glaze,Виноград Малина
 hqd_glaze,Черная смородина
 hqd_glaze,Черника
 elfbar_nic_king,Арбуз Вишня
 elfbar_nic_king,Виноград Клюква
 elfbar_nic_king,Черника Малина лёд
-lost_mary_os,Ананас Апельсин
 lost_mary_ос,Кислый виноград лёд
 plonq_ultra,Виноград
 plonq_ultra,Голубика Малина
@@ -45,4 +43,5 @@ rell_ultima,Jasmine Raspberry (Жасмин Малина)
 rell_ultima,Kiwi Guava (Киви Гуава)
 rell_ultima,Peach Grape (Персик Виноград)
 rell_ultima,Peach Tea (Персиковый чай)
+
 
