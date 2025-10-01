@@ -249,7 +249,7 @@ def cart_keyboard():
 
 def pod_accessories_keyboard():
     return ReplyKeyboardMarkup([
-        ["Испарители", "Картриджы"],
+        ["Испарители", "Картриджи"],
         ["⬅️ Назад в каталог", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
@@ -475,7 +475,7 @@ async def show_cartridges(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     USER_STATES[user.id] = "cartridges"
 
     await update.message.reply_text(
-        "🔧 *Картриджы для под-систем:*\n\n"
+        "🔧 *Картриджи для под-систем:*\n\n"
         "Выберите тип картриджа:",
         reply_markup=cartridges_keyboard(),
         parse_mode="Markdown"
@@ -1008,7 +1008,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 parse_mode="Markdown",
                 reply_markup=back_to_catalog_keyboard()
             )
-        elif text == "Картриджы":
+        elif text == "Картриджи":
             await show_cartridges(update, context)
         elif text == "⬅️ Назад в каталог":
             await back_to_catalog(update, context)
@@ -1103,5 +1103,6 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
 
 
