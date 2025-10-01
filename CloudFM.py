@@ -470,6 +470,17 @@ async def show_pod_accessories(update: Update, context: ContextTypes.DEFAULT_TYP
         parse_mode="Markdown"
     )
 
+async def show_cartridges(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    USER_STATES[user.id] = "cartridges"
+
+    await update.message.reply_text(
+        "🔧 *Картриджы для под-систем:*\n\n"
+        "Выберите тип картриджа:",
+        reply_markup=cartridges_keyboard(),
+        parse_mode="Markdown"
+    )  
+
 async def handle_brand_selection(update: Update, context: ContextTypes.DEFAULT_TYPE, brand: str, category: str) -> None:
     user = update.effective_user
     USER_STATES[user.id] = f"{category.lower()}_products"
@@ -1092,4 +1103,5 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
 
