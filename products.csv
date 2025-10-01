@@ -1,4 +1,4 @@
-category,subcategory,brand,product_id,name,price,image_url,has_flavors
+ category,subcategory,brand,product_id,name,price,image_url,has_flavors
 Одноразки,HQD,HQD,hqd_neo_x,"HQD NEO X 25000 затяжек",1600,https://iimg.su/i/nPspGQ,True
 Одноразки,HQD,HQD,hqd_glaze,"HQD Glaze 12000 затяжек",1350,https://iimg.su/i/4KJr2t,True
 Одноразки,HQD,HQD,hqd_click,"HQD Click Plus 30000 затяжек",1650,https://iimg.su/i/pzO0JN,True
@@ -23,9 +23,10 @@ category,subcategory,brand,product_id,name,price,image_url,has_flavors
 Жидкости,Rell,Rell,rell_green,"Rell Green Salt 2% 30 ml",450,https://iimg.su/i/0KnwNB,True
 Жидкости,Rell,Rell,rell_ultima,"Rell Ultima Salt 2% 30 ml",600,https://iimg.su/i/tZq4Bl,True
 Жидкости,Skala,Skala,skala,"Жидкость SKALA Salt 2% ULTRA 30 ml",450,https://iimg.su/i/rpznSI,True
-Комплектующие для под-систем,Картриджи,PLONQ,plonq_cartridge,"Картридж PLONQ 3ml 0.4 Ом",350,https://iimg.su/i/L8HJGr,True
+Комплектующие для под-систем,Картриджи,PLONQ,plonq_cartridge,"Картридж PLONQ 3ml 0.4 Ом",1000,https://iimg.su/i/L8HJGr,True
 Комплектующие для под-систем,Картриджи,Vaporesso,vaporesso_cartridge,"Картридж Vaporesso XROS 3ML 0.4 Ом",250,https://iimg.su/i/BGCTN4,True
-Комплектующие для под-систем,Картриджи,Vaporesso,artridge,"Картридж XROS 3ML 0.4 Ом",250,https://iimg.su/i/BGCTN4,True
+
+
 
 
 
