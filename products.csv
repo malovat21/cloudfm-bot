@@ -4,20 +4,28 @@ category,subcategory,brand,product_id,name,price,image_url,has_flavors
 Одноразки,HQD,HQD,hqd_click,"HQD Click Plus 30000 затяжек",1650,https://iimg.su/i/pzO0JN,True
 Одноразки,ELF BAR,ELF BAR,elfbar_nic_king,"ELF BAR NIC KING 30000 затяжек",1450,https://iimg.su/i/Q8bqko,True
 Одноразки,LOST MARY,LOST MARY,lost_mary_os,"Lost Mary OS 25000 затяжек",1400,https://iimg.su/i/IMFhAh,True
+Одноразки,LOST MARY,LOST MARY,lost_mary_mt15,"Lost Mary MT 15000 затяжек",1250,https://iimg.su/i/9xt9Rj,True
 Одноразки,ELF BAR,ELF BAR,elf_bar_gh33,"ELF BAR GH 33000 затяжек",1550,https://iimg.su/i/KulBi3,True
 Одноразки,PLONQ,PLONQ,plonq_ultra,"Plonq Ultra 12000 затяжек",1850,https://iimg.su/i/sUggA0,True
 #Одноразки,PLONQ,PLONQ,plonq_roqy_l,"Plonq Roqy L 20000 затяжек",1700,https://iimg.su/i/tMBFds,True
 Одноразки,PUFFMI,PUFFMI,puffmi_tank,"PUFFMI TANK 20000 затяжек",1650,https://iimg.su/i/t1ibma,True
 Одноразки,WAKA,WAKA,waka_blast,"WAKA Blast 38000 затяжек",1700,https://iimg.su/i/DjZBoz,True
 Одноразки,INSTABAR,INSTABAR,instabar_wt,"Instabar WT 15000 затяжек",800,https://iimg.su/i/53MBuB,True
+Одноразки,INSTABAR,INSTABAR,instabar_40,"Instabar BE 40000 затяжек",1200,https://iimg.su/i/QakQOy,True
+Одноразки,VOZOL,VOZOL,vozol_gear56,"VOZOL GEAR 56000 затяжек",1650,https://iimg.su/i/sPt6nh,True
+Одноразки,HUSKY,HUSKY,husky_air_max,"HUSKY Air Max 10000 затяжек",850,https://iimg.su/i/5mBDaY,True
+Одноразки,GEEKBAR,GEEKBAR,geekbar_pulse_x,"GEEK BAR Pulse X 25000 затяжек",950,https://iimg.su/i/Z0pWmC,True
+Одноразки,SOAK,SOAK,soak_line9,"SOAK LINE 9 9000 затяжек",750,https://iimg.su/i/ZO9CIm,True
 Жидкости,HUSKY,HUSKY,husky_malaysian,"HUSKY IMPORT MALAYSIAN SALT (20MG) 30 ml",400,https://iimg.su/i/QxOz3w,True
 Жидкости,PODONKI,PODONKI,podonki_arcade,"PODONKI ARCADE Salt 2% 30 ml",400,https://iimg.su/i/Bkw383,True
 Жидкости,CATSWILL,CATSWILL,catswill,"CATSWILL Salt 2% 30 ml",450,https://iimg.su/i/J8MdO8,True
 Жидкости,MAXWELLS,MAXWELLS,maxwells,"MAXWELLS Salt 2% 30 ml",400,https://iimg.su/i/3ElcUl,True
 Жидкости,Rell,Rell,rell_green,"Rell Green Salt 2% 30 ml",450,https://iimg.su/i/0KnwNB,True
 Жидкости,Rell,Rell,rell_ultima,"Rell Ultima Salt 2% 30 ml",600,https://iimg.su/i/tZq4Bl,True
+Жидкости,Skala,Skala,skala,"Жидкость SKALA Salt 2% ULTRA 30 ml",450,https://iimg.su/i/rpznSI,True
 Комплектующие для под-систем,Картриджи,PLONQ,plonq_cartridge,"Картридж PLONQ 3ml 0.4 Ом",350,https://iimg.su/i/L8HJGr,True
 Комплектующие для под-систем,Картриджи,Vaporesso,vaporesso_cartridge,"Картридж Vaporesso XROS 3ML 0.4 Ом",250,https://iimg.su/i/BGCTN4,True
+
 
 
 
