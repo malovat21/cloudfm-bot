@@ -1,4 +1,4 @@
- category,subcategory,brand,product_id,name,price,image_url,has_flavors
+category,subcategory,brand,product_id,name,price,image_url,has_flavors
 Одноразки,HQD,HQD,hqd_neo_x,"HQD NEO X 25000 затяжек",1600,https://iimg.su/i/nPspGQ,True
 Одноразки,HQD,HQD,hqd_glaze,"HQD Glaze 12000 затяжек",1350,https://iimg.su/i/4KJr2t,True
 Одноразки,HQD,HQD,hqd_click,"HQD Click Plus 30000 затяжек",1650,https://iimg.su/i/pzO0JN,True
@@ -7,7 +7,7 @@
 Одноразки,LOST MARY,LOST MARY,lost_mary_mt15,"Lost Mary MT 15000 затяжек",1250,https://iimg.su/i/9xt9Rj,True
 Одноразки,ELF BAR,ELF BAR,elf_bar_gh33,"ELF BAR GH 33000 затяжек",1550,https://iimg.su/i/KulBi3,True
 Одноразки,PLONQ,PLONQ,plonq_ultra,"Plonq Ultra 12000 затяжек",1850,https://iimg.su/i/sUggA0,True
-#Одноразки,PLONQ,PLONQ,plonq_roqy_l,"Plonq Roqy L 20000 затяжек",1700,https://iimg.su/i/tMBFds,True
+Одноразки,PLONQ,PLONQ,plonq_roqy_l,"Plonq Roqy L 20000 затяжек",1700,https://iimg.su/i/tMBFds,True
 Одноразки,PUFFMI,PUFFMI,puffmi_tank,"PUFFMI TANK 20000 затяжек",1650,https://iimg.su/i/t1ibma,True
 Одноразки,WAKA,WAKA,waka_blast,"WAKA Blast 38000 затяжек",1700,https://iimg.su/i/DjZBoz,True
 Одноразки,INSTABAR,INSTABAR,instabar_wt,"Instabar WT 15000 затяжек",800,https://iimg.su/i/53MBuB,True
@@ -25,6 +25,7 @@
 Жидкости,Skala,Skala,skala,"Жидкость SKALA Salt 2% ULTRA 30 ml",450,https://iimg.su/i/rpznSI,True
 Комплектующие для под-систем,Картриджи,PLONQ,plonq_cartridge,"Картридж PLONQ 3ml 0.4 Ом",350,https://iimg.su/i/L8HJGr,True
 Комплектующие для под-систем,Картриджи,Vaporesso,vaporesso_cartridge,"Картридж Vaporesso XROS 3ML 0.4 Ом",250,https://iimg.su/i/BGCTN4,True
+
 
 
 
