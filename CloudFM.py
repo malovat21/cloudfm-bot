@@ -151,7 +151,7 @@ def catalog_menu_keyboard():
 def liquids_brands_keyboard():
     # Динамически получаем бренды жидкостей из CSV
     brands = set()
-    for product in PRODUCTS_DATA:
+    for product in products:
         if product['category'] == 'Жидкости':
             brands.add(product['brand'])
     
@@ -169,7 +169,7 @@ def liquids_brands_keyboard():
 def liquids_brands_keyboard():
     # Динамически получаем бренды жидкостей из CSV
     brands = set()
-    for product in PRODUCTS_DATA:
+    for product in products:
         if product['category'] == 'Жидкости':
             brands.add(product['brand'])
     
@@ -1081,3 +1081,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
