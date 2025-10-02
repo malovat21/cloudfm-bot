@@ -249,7 +249,7 @@ def cart_keyboard():
 
 def pod_accessories_keyboard():
     return ReplyKeyboardMarkup([
-        ["Испарители", "Картриджи"],
+        ["Испарители", "Картриджы"],
         ["⬅️ Назад в каталог", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
@@ -458,28 +458,6 @@ async def show_disposable(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         reply_markup=disposable_brands_keyboard(),
         parse_mode="Markdown"
     )
-
-async def show_pod_accessories(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    USER_STATES[user.id] = "pod_accessories"
-
-    await update.message.reply_text(
-        "⚙️ *Комплектующие для под-систем:*\n\n"
-        "Выберите категорию комплектующих:",
-        reply_markup=pod_accessories_keyboard(),
-        parse_mode="Markdown"
-    )
-
-async def show_cartridges(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    USER_STATES[user.id] = "cartridges"
-
-    await update.message.reply_text(
-        "🔧 *Картриджи для под-систем:*\n\n"
-        "Выберите тип картриджа:",
-        reply_markup=cartridges_keyboard(),
-        parse_mode="Markdown"
-    )  
 
 async def handle_brand_selection(update: Update, context: ContextTypes.DEFAULT_TYPE, brand: str, category: str) -> None:
     user = update.effective_user
@@ -1008,7 +986,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 parse_mode="Markdown",
                 reply_markup=back_to_catalog_keyboard()
             )
-        elif text == "Картриджи":
+        elif text == "Картриджы":
             await show_cartridges(update, context)
         elif text == "⬅️ Назад в каталог":
             await back_to_catalog(update, context)
@@ -1103,6 +1081,3 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
-
-
-
