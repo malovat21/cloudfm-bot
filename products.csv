@@ -10,6 +10,7 @@ category,subcategory,brand,product_id,name,price,image_url,has_flavors
 Одноразки,PLONQ,PLONQ,plonq_roqy_l,"Plonq Roqy L 20000 затяжек",1700,https://iimg.su/i/tMBFds,True
 Одноразки,PUFFMI,PUFFMI,puffmi_tank,"PUFFMI TANK 20000 затяжек",1650,https://iimg.su/i/t1ibma,True
 Одноразки,WAKA,WAKA,waka_blast,"WAKA Blast 38000 затяжек",1700,https://iimg.su/i/DjZBoz,True
+Одноразки,WAKA,WAKA,waka_jupiter,"WAKA Jupiter 30000 затяжек",1500,https://iimg.su/i/DjZBoz,True
 Одноразки,INSTABAR,INSTABAR,instabar_wt,"Instabar WT 15000 затяжек",800,https://iimg.su/i/53MBuB,True
 Одноразки,INSTABAR,INSTABAR,instabar_40,"Instabar BE 40000 затяжек",1200,https://iimg.su/i/QakQOy,True
 Одноразки,VOZOL,VOZOL,vozol_gear56,"VOZOL GEAR 56000 затяжек",1650,https://iimg.su/i/sPt6nh,True
@@ -25,6 +26,7 @@ category,subcategory,brand,product_id,name,price,image_url,has_flavors
 Жидкости,Skala,Skala,skala,"Жидкость SKALA Salt 2% ULTRA 30 ml",450,https://iimg.su/i/rpznSI,True
 Комплектующие для под-систем,Картриджи,PLONQ,plonq_cartridge,"Картридж PLONQ 3ml 0.4 Ом",350,https://iimg.su/i/L8HJGr,True
 Комплектующие для под-систем,Картриджи,Vaporesso,vaporesso_cartridge,"Картридж Vaporesso XROS 3ML 0.4 Ом",250,https://iimg.su/i/BGCTN4,True
+
 
 
 
