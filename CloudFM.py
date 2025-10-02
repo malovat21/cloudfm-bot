@@ -151,25 +151,7 @@ def catalog_menu_keyboard():
 def liquids_brands_keyboard():
     # Динамически получаем бренды жидкостей из CSV
     brands = set()
-    for product in products:
-        if product['category'] == 'Жидкости':
-            brands.add(product['brand'])
-    
-    keyboard = []
-    row = []
-    for i, brand in enumerate(sorted(brands)):
-        row.append(brand)
-        if len(row) == 2 or i == len(brands) - 1:
-            keyboard.append(row)
-            row = []
-    
-    keyboard.append(["⬅️ Назад в каталог", "🏠 Главное меню"])
-    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-
-def liquids_brands_keyboard():
-    # Динамически получаем бренды жидкостей из CSV
-    brands = set()
-    for product in products:
+    for product in PRODUCTS_DATA:
         if product['category'] == 'Жидкости':
             brands.add(product['brand'])
     
@@ -236,6 +218,46 @@ def get_products_keyboard(category, brand):
     
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
+def get_accessories_categories_keyboard():
+    """Создает клавиатуру для категорий комплектующих из CSV"""
+    # Динамически получаем категории комплектующих из CSV
+    categories = set()
+    for product in PRODUCTS_DATA:
+        if product['category'] == 'Комплектующие':
+            categories.add(product['subcategory'])
+    
+    keyboard = []
+    row = []
+    
+    for i, category in enumerate(sorted(categories)):
+        row.append(category)
+        if len(row) == 2 or i == len(categories) - 1:
+            keyboard.append(row)
+            row = []
+    
+    keyboard.append(["⬅️ Назад в каталог", "🏠 Главное меню"])
+    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+
+def get_accessory_products_keyboard(category: str):
+    """Создает клавиатуру для товаров конкретной категории комплектующих"""
+    # Получаем товары этой категории из CSV
+    products = []
+    for product in PRODUCTS_DATA:
+        if product['category'] == 'Комплектующие' and product['subcategory'] == category:
+            products.append(product['name'])
+    
+    keyboard = []
+    row = []
+    
+    for i, product in enumerate(products):
+        row.append(product)
+        if len(row) == 2 or i == len(products) - 1:
+            keyboard.append(row)
+            row = []
+    
+    keyboard.append(["⬅️ Назад к комплектующим", "🏠 Главное меню"])
+    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+
 def back_to_catalog_keyboard():
     return ReplyKeyboardMarkup([
         ["⬅️ Назад в каталог", "🏠 Главное меню"]
@@ -245,18 +267,6 @@ def cart_keyboard():
     return ReplyKeyboardMarkup([
         ["✅ Отправить заказ", "✏️ Редактировать заказ"],
         ["⬅️ Назад в каталог", "🏠 Главное меню"]
-    ], resize_keyboard=True)
-
-def pod_accessories_keyboard():
-    return ReplyKeyboardMarkup([
-        ["Испарители", "Картриджы"],
-        ["⬅️ Назад в каталог", "🏠 Главное меню"]
-    ], resize_keyboard=True)
-
-def cartridges_keyboard():
-    return ReplyKeyboardMarkup([
-        ["PLONQ 3ml 0.4 Ом", "Vaporesso XROS 3ML 0.4 Ом"],
-        ["⬅️ Назад к комплектующим", "🏠 Главное меню"]
     ], resize_keyboard=True)
 
 # ---- Функции для администраторов ----
@@ -459,6 +469,33 @@ async def show_disposable(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         parse_mode="Markdown"
     )
 
+async def show_pod_accessories(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    USER_STATES[user.id] = "pod_accessories"
+    
+    # Динамически получаем категории комплектующих из CSV
+    categories = set()
+    for product in PRODUCTS_DATA:
+        if product['category'] == 'Комплектующие':
+            categories.add(product['subcategory'])
+    
+    if not categories:
+        await update.message.reply_text(
+            "❌ *Комплектующие временно отсутствуют*\n\n"
+            "К сожалению, комплектующие временно отсутствуют в продаже. "
+            "Выберите другие товары из каталога.",
+            parse_mode="Markdown",
+            reply_markup=back_to_catalog_keyboard()
+        )
+        return
+
+    await update.message.reply_text(
+        "⚙️ *Комплектующие для под-систем:*\n\n"
+        "Выберите категорию:",
+        reply_markup=get_accessories_categories_keyboard(),
+        parse_mode="Markdown"
+    )
+
 async def handle_brand_selection(update: Update, context: ContextTypes.DEFAULT_TYPE, brand: str, category: str) -> None:
     user = update.effective_user
     USER_STATES[user.id] = f"{category.lower()}_products"
@@ -483,6 +520,36 @@ async def handle_brand_selection(update: Update, context: ContextTypes.DEFAULT_T
     await update.message.reply_text(
         message_text,
         reply_markup=get_products_keyboard(category, brand),
+        parse_mode="Markdown"
+    )
+
+async def show_accessory_products(update: Update, context: ContextTypes.DEFAULT_TYPE, category: str) -> None:
+    user = update.effective_user
+    USER_STATES[user.id] = f"accessory_{category}"
+    
+    # Получаем товары этой категории из CSV
+    products = []
+    for product in PRODUCTS_DATA:
+        if product['category'] == 'Комплектующие' and product['subcategory'] == category:
+            products.append(product)
+    
+    if not products:
+        await update.message.reply_text(
+            f"❌ Товары в категории '{category}' временно отсутствуют",
+            reply_markup=get_accessories_categories_keyboard(),
+            parse_mode="Markdown"
+        )
+        return
+    
+    message_text = f"🔧 *Товары {category}:*\n\n"
+    for product in products:
+        message_text += f"• {product['name']} - {product['price']} ₽\n"
+    
+    message_text += "\nВыберите продукт:"
+    
+    await update.message.reply_text(
+        message_text,
+        reply_markup=get_accessory_products_keyboard(category),
         parse_mode="Markdown"
     )
 
@@ -978,27 +1045,34 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     # Обработка комплектующих
     elif USER_STATES.get(user_id) == "pod_accessories":
-        if text == "Испарители":
-            await update.message.reply_text(
-                "❌ *Товар отсутствует*\n\n"
-                "К сожалению, испарители временно отсутствуют в продаже. "
-                "Выберите другие товары из каталога.",
-                parse_mode="Markdown",
-                reply_markup=back_to_catalog_keyboard()
-            )
-        elif text == "Картриджы":
-            await show_cartridges(update, context)
+        # Проверяем, есть ли такая категория в CSV
+        category_exists = any(
+            p['category'] == 'Комплектующие' and p['subcategory'] == text 
+            for p in PRODUCTS_DATA
+        )
+        
+        if category_exists:
+            await show_accessory_products(update, context, text)
         elif text == "⬅️ Назад в каталог":
             await back_to_catalog(update, context)
         elif text == "🏠 Главное меню":
             await back_to_main(update, context)
+        else:
+            await update.message.reply_text(
+                "❌ Категория не найдена",
+                reply_markup=get_accessories_categories_keyboard()
+            )
 
-    # Обработка картриджей
-    elif USER_STATES.get(user_id) == "cartridges":
-        if text == "PLONQ 3ml 0.4 Ом":
-            await handle_product_selection(update, context, "Картридж PLONQ 3ml 0.4 Ом")
-        elif text == "Vaporesso XROS 3ML 0.4 Ом":
-            await handle_product_selection(update, context, "Картридж Vaporesso XROS 3ML 0.4 Ом")
+    # Обработка товаров комплектующих
+    elif USER_STATES.get(user_id, "").startswith("accessory_"):
+        # Проверяем, есть ли такой товар в CSV
+        product_exists = any(
+            p['category'] == 'Комплектующие' and p['name'] == text 
+            for p in PRODUCTS_DATA
+        )
+        
+        if product_exists:
+            await handle_product_selection(update, context, text)
         elif text == "⬅️ Назад к комплектующим":
             USER_STATES[user_id] = "pod_accessories"
             await show_pod_accessories(update, context)
@@ -1081,4 +1155,3 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
-
