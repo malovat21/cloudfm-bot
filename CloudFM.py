@@ -155,6 +155,24 @@ def liquids_brands_keyboard():
         if product['category'] == 'Жидкости':
             brands.add(product['brand'])
     
+    keyboard = []
+    row = []
+    for i, brand in enumerate(sorted(brands)):
+        row.append(brand)
+        if len(row) == 2 or i == len(brands) - 1:
+            keyboard.append(row)
+            row = []
+    
+    keyboard.append(["⬅️ Назад в каталог", "🏠 Главное меню"])
+    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+
+def liquids_brands_keyboard():
+    # Динамически получаем бренды жидкостей из CSV
+    brands = set()
+    for product in PRODUCTS_DATA:
+        if product['category'] == 'Жидкости':
+            brands.add(product['brand'])
+    
     # Сортируем бренды и ограничиваем по 3 в ряду
     sorted_brands = sorted(brands)
     keyboard = []
@@ -438,28 +456,6 @@ async def show_disposable(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         "🚬 *Одноразовые электронные сигареты:*\n\n"
         "Выберите бренд:",
         reply_markup=disposable_brands_keyboard(),
-        parse_mode="Markdown"
-    )
-
-async def show_pod_accessories(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    USER_STATES[user.id] = "pod_accessories"
-
-    await update.message.reply_text(
-        "⚙️ *Комплектующие для под-систем:*\n\n"
-        "Выберите категорию комплектующих:",
-        reply_markup=pod_accessories_keyboard(),
-        parse_mode="Markdown"
-    )
-
-async def show_cartridges(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    USER_STATES[user.id] = "cartridges"
-
-    await update.message.reply_text(
-        "🔧 *Картриджы для под-систем:*\n\n"
-        "Выберите тип картриджа:",
-        reply_markup=cartridges_keyboard(),
         parse_mode="Markdown"
     )
 
@@ -822,25 +818,30 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     user = update.effective_user
     user_id = user.id
     
-    # Логирование для отладки
-    logger.info(f"User {user_id} sent: '{text}', current state: {USER_STATES.get(user_id, 'none')}")
-    
-    # Сначала проверяем навигационные команды
+    # Навигационные команды
     navigation_commands = {
         "⬅️ назад к жидкостям": back_to_liquids,
         "⬅️ назад к одноразкам": back_to_disposable,
         "⬅️ назад к комплектующим": back_to_accessories,
         "⬅️ назад в каталог": back_to_catalog,
         "🏠 главное меню": back_to_main,
+        "🛒 каталог": show_catalog,
+        "🛍️ корзина": show_cart,
+        "🚚 доставка": delivery_info,
+        "❓ помощь": help_command,
+        "📞 контакты": contacts
     }
     
+    # Проверяем навигационные команды
     normalized_text = text.lower().strip()
     for command, handler in navigation_commands.items():
         if normalized_text == command.lower():
             await handler(update, context)
+            if command in ["🏠 главное меню", "⬅️ назад в каталог", "🛒 каталог"]:
+                USER_STATES[user_id] = "main_menu" if command == "🏠 главное меню" else "catalog_menu"
             return
 
-    # Обработка выбора вкуса (должна быть ВЫШЕ всего остального)
+    # Обработка выбора вкуса
     current_state = USER_STATES.get(user_id, "")
     if current_state.startswith("waiting_flavor_"):
         if text.isdigit():
@@ -898,7 +899,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             await update.message.reply_text("❌ Пожалуйста, введите цифру, соответствующую вкусу, или используйте кнопки навигации.")
         return
 
-    # Главное меню
+    # Обработка главного меню
     if text == "🛒 Каталог":
         await show_catalog(update, context)
     elif text == "🛍️ Корзина":
@@ -910,7 +911,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif text == "📞 Контакты":
         await contacts(update, context)
 
-    # Меню каталога - ДОЛЖНО БЫТЬ СРАЗУ ПОСЛЕ ГЛАВНОГО МЕНЮ
+    # Обработка меню каталога
     elif text == "💧 Жидкости":
         await show_liquids(update, context)
     elif text == "🚬 Одноразки":
@@ -936,7 +937,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif text == "🏠 Главное меню":
         await back_to_main(update, context)
 
-    # Обработка состояний (должна быть ПОСЛЕ всех конкретных кнопок)
+    # Обработка брендов жидкостей
     elif USER_STATES.get(user_id) == "liquids_brands":
         # Получаем все бренды жидкостей из CSV
         liquid_brands = set()
@@ -946,11 +947,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         
         if text in liquid_brands:
             await handle_brand_selection(update, context, text, "Жидкости")
-        elif text == "⬅️ Назад в каталог":
-            await back_to_catalog(update, context)
-        elif text == "🏠 Главное меню":
-            await back_to_main(update, context)
 
+    # Обработка брендов одноразок
     elif USER_STATES.get(user_id) == "disposable_brands":
         # Получаем все бренды одноразок из CSV
         disposable_brands = set()
@@ -960,33 +958,25 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         
         if text in disposable_brands:
             await handle_brand_selection(update, context, text, "Одноразки")
-        elif text == "⬅️ Назад в каталог":
-            await back_to_catalog(update, context)
-        elif text == "🏠 Главное меню":
-            await back_to_main(update, context)
 
-    elif USER_STATES.get(user_id) == "жидкости_products":
+    # Обработка товаров жидкостей
+    elif USER_STATES.get(user_id) in ["жидкости_products", "одноразки_products"]:
+        category = "Жидкости" if USER_STATES[user_id] == "жидкости_products" else "Одноразки"
+        
         # Проверяем, есть ли такой товар в CSV
-        product_exists = any(p['name'] == text for p in PRODUCTS_DATA if p['category'] == "Жидкости")
+        product_exists = any(p['name'] == text for p in PRODUCTS_DATA if p['category'] == category)
         
         if product_exists:
             await handle_product_selection(update, context, text)
-        elif text == "⬅️ Назад к жидкостям":
-            await back_to_liquids(update, context)
+        elif text in ["⬅️ Назад к жидкостям", "⬅️ Назад к одноразкам"]:
+            if "жидкости" in text:
+                await back_to_liquids(update, context)
+            else:
+                await back_to_disposable(update, context)
         elif text == "🏠 Главное меню":
             await back_to_main(update, context)
 
-    elif USER_STATES.get(user_id) == "одноразки_products":
-        # Проверяем, есть ли такой товар в CSV
-        product_exists = any(p['name'] == text for p in PRODUCTS_DATA if p['category'] == "Одноразки")
-        
-        if product_exists:
-            await handle_product_selection(update, context, text)
-        elif text == "⬅️ Назад к одноразкам":
-            await back_to_disposable(update, context)
-        elif text == "🏠 Главное меню":
-            await back_to_main(update, context)
-
+    # Обработка комплектующих
     elif USER_STATES.get(user_id) == "pod_accessories":
         if text == "Испарители":
             await update.message.reply_text(
@@ -1003,15 +993,27 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         elif text == "🏠 Главное меню":
             await back_to_main(update, context)
 
+    # Обработка картриджей
     elif USER_STATES.get(user_id) == "cartridges":
         if text == "PLONQ 3ml 0.4 Ом":
             await handle_product_selection(update, context, "Картридж PLONQ 3ml 0.4 Ом")
         elif text == "Vaporesso XROS 3ML 0.4 Ом":
             await handle_product_selection(update, context, "Картридж Vaporesso XROS 3ML 0.4 Ом")
         elif text == "⬅️ Назад к комплектующим":
-            await back_to_accessories(update, context)
+            USER_STATES[user_id] = "pod_accessories"
+            await show_pod_accessories(update, context)
         elif text == "🏠 Главное меню":
             await back_to_main(update, context)
+
+    # Обработка навигации
+    elif text == "⬅️ Назад в каталог":
+        await back_to_catalog(update, context)
+    elif text == "⬅️ Назад к жидкостям":
+        await back_to_liquids(update, context)
+    elif text == "⬅️ Назад к одноразкам":
+        await back_to_disposable(update, context)
+    elif text == "⬅️ Назад к комплектующим":
+        await back_to_accessories(update, context)
 
     # Обработка корзины
     elif text == "✅ Отправить заказ":
@@ -1036,6 +1038,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 "❌ Неверный номер товара",
                 reply_markup=cart_keyboard()
             )
+        return
 
     else:
         await update.message.reply_text(
@@ -1078,4 +1081,3 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
-
