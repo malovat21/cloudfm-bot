@@ -947,6 +947,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await back_to_main(update, context)
 
     # Обработка брендов жидкостей
+     # Обработка брендов жидкостей
     elif USER_STATES.get(user_id) == "liquids_brands":
         # Получаем все бренды жидкостей из CSV
         liquid_brands = set()
@@ -956,6 +957,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         
         if text in liquid_brands:
             await handle_brand_selection(update, context, text, "Жидкости")
+        elif text == "⬅️ Назад в каталог":
+            await back_to_catalog(update, context)
+        elif text == "🏠 Главное меню":
+            await back_to_main(update, context)
 
     # Обработка брендов одноразок
     elif USER_STATES.get(user_id) == "disposable_brands":
@@ -967,10 +972,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         
         if text in disposable_brands:
             await handle_brand_selection(update, context, text, "Одноразки")
-
-    # Обработка товаров жидкостей
-    elif USER_STATES.get(user_id) in ["жидкости_products", "одноразки_products"]:
-        category = "Жидкости" if USER_STATES[user_id] == "жидкости_products" else "Одноразки"
+        elif text == "⬅️ Назад в каталог":
+            await back_to_catalog(update, context)
+        elif text == "🏠 Главное меню":
+            await back_to_main(update, context)
         
         # Проверяем, есть ли такой товар в CSV
         product_exists = any(p['name'] == text for p in PRODUCTS_DATA if p['category'] == category)
@@ -1090,5 +1095,6 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
 
 
