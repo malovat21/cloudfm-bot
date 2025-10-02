@@ -155,24 +155,6 @@ def liquids_brands_keyboard():
         if product['category'] == 'Жидкости':
             brands.add(product['brand'])
     
-    keyboard = []
-    row = []
-    for i, brand in enumerate(sorted(brands)):
-        row.append(brand)
-        if len(row) == 2 or i == len(brands) - 1:
-            keyboard.append(row)
-            row = []
-    
-    keyboard.append(["⬅️ Назад в каталог", "🏠 Главное меню"])
-    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-
-def liquids_brands_keyboard():
-    # Динамически получаем бренды жидкостей из CSV
-    brands = set()
-    for product in PRODUCTS_DATA:
-        if product['category'] == 'Жидкости':
-            brands.add(product['brand'])
-    
     # Сортируем бренды и ограничиваем по 3 в ряду
     sorted_brands = sorted(brands)
     keyboard = []
@@ -1081,3 +1063,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
