@@ -822,30 +822,22 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     user = update.effective_user
     user_id = user.id
     
-    # Добавьте логирование для отладки
+    # Логирование для отладки
     logger.info(f"User {user_id} sent: '{text}', current state: {USER_STATES.get(user_id, 'none')}")
     
-    # Навигационные команды
+    # Сначала проверяем навигационные команды
     navigation_commands = {
         "⬅️ назад к жидкостям": back_to_liquids,
         "⬅️ назад к одноразкам": back_to_disposable,
         "⬅️ назад к комплектующим": back_to_accessories,
         "⬅️ назад в каталог": back_to_catalog,
         "🏠 главное меню": back_to_main,
-        "🛒 каталог": show_catalog,
-        "🛍️ корзина": show_cart,
-        "🚚 доставка": delivery_info,
-        "❓ помощь": help_command,
-        "📞 контакты": contacts
     }
     
-    # Проверяем навигационные команды
     normalized_text = text.lower().strip()
     for command, handler in navigation_commands.items():
         if normalized_text == command.lower():
             await handler(update, context)
-            if command in ["🏠 главное меню", "⬅️ назад в каталог", "🛒 каталог"]:
-                USER_STATES[user_id] = "main_menu" if command == "🏠 главное меню" else "catalog_menu"
             return
 
     # Обработка выбора вкуса
@@ -906,7 +898,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             await update.message.reply_text("❌ Пожалуйста, введите цифру, соответствующую вкусу, или используйте кнопки навигации.")
         return
 
-    # Обработка главного меню
+    # Главное меню
     if text == "🛒 Каталог":
         await show_catalog(update, context)
     elif text == "🛍️ Корзина":
@@ -918,7 +910,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif text == "📞 Контакты":
         await contacts(update, context)
 
-    # Обработка меню каталога
+    # Меню каталога - ЭТО САМОЕ ВАЖНОЕ МЕСТО!
     elif text == "💧 Жидкости":
         await show_liquids(update, context)
     elif text == "🚬 Одноразки":
@@ -1049,7 +1041,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 "❌ Неверный номер товара",
                 reply_markup=cart_keyboard()
             )
-        return
 
     else:
         await update.message.reply_text(
