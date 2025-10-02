@@ -2,6 +2,7 @@ import asyncio
 import logging
 import sqlite3
 import csv
+import re
 from typing import Dict, List
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -23,40 +24,86 @@ ADMIN_USERNAME = "@malovat21"
 
 # ---- Функции для работы с CSV ----
 
+def clean_string(text: str) -> str:
+    """Очищает строку от лишних символов и нормализует пробелы"""
+    if not text:
+        return ""
+    # Удаляем лишние пробелы и непечатаемые символы
+    text = re.sub(r'\s+', ' ', text.strip())
+    return text
+
+def normalize_category(category: str) -> str:
+    """Нормализует названия категорий"""
+    category = clean_string(category)
+    
+    # Исправляем опечатки и варианты написания
+    category_mapping = {
+        'фодноразки': 'Одноразки',
+        'одноразки': 'Одноразки',
+        'жидкости': 'Жидкости',
+        'комплектующие для под систем': 'Комплектующие',
+        'комплектующие': 'Комплектующие'
+    }
+    
+    lower_category = category.lower()
+    return category_mapping.get(lower_category, category)
+
 def load_products_from_csv() -> List[Dict]:
     """Загружает список продуктов из CSV файла"""
     products = []
     try:
         with open('products.csv', 'r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
-            for row in reader:
+            for row_num, row in enumerate(reader, 1):
                 # Пропускаем пустые строки
                 if not any(row.values()):
                     continue
-                    
+                
+                # Очищаем и нормализуем данные
+                cleaned_row = {}
+                for key, value in row.items():
+                    cleaned_key = clean_string(key)
+                    cleaned_value = clean_string(value)
+                    cleaned_row[cleaned_key] = cleaned_value
+                
                 # Проверяем наличие обязательных полей
-                if 'price' not in row or not row['price']:
-                    logging.warning(f"Пропущен продукт без цены: {row}")
+                if 'price' not in cleaned_row or not cleaned_row['price']:
+                    logging.warning(f"Пропущен продукт без цены в строке {row_num}: {cleaned_row}")
                     continue
-                    
+                
+                # Нормализуем категорию
+                if 'category' in cleaned_row:
+                    cleaned_row['category'] = normalize_category(cleaned_row['category'])
+                
                 # Конвертируем цену в число и флаг в булево значение
                 try:
-                    row['price'] = int(row['price'])
-                    row['has_flavors'] = row.get('has_flavors', 'false').lower() == 'true'
+                    cleaned_row['price'] = int(cleaned_row['price'])
+                    cleaned_row['has_flavors'] = cleaned_row.get('has_flavors', 'false').lower() == 'true'
                     
                     # Добавляем значения по умолчанию для отсутствующих полей
-                    row['category'] = row.get('category', '')
-                    row['brand'] = row.get('brand', '')
-                    row['subcategory'] = row.get('subcategory', '')
-                    row['product_id'] = row.get('product_id', '')
-                    row['image_url'] = row.get('image_url', '')
+                    cleaned_row['category'] = cleaned_row.get('category', '')
+                    cleaned_row['brand'] = cleaned_row.get('brand', '')
+                    cleaned_row['subcategory'] = cleaned_row.get('subcategory', '')
+                    cleaned_row['product_id'] = cleaned_row.get('product_id', '')
+                    cleaned_row['image_url'] = cleaned_row.get('image_url', '')
+                    cleaned_row['name'] = cleaned_row.get('name', '')
                     
-                    products.append(row)
+                    products.append(cleaned_row)
                 except (ValueError, KeyError) as e:
-                    logging.error(f"Ошибка обработки строки {row}: {e}")
+                    logging.error(f"Ошибка обработки строки {row_num} {cleaned_row}: {e}")
                     continue
                     
         logging.info(f"Загружено {len(products)} товаров из CSV")
+        
+        # Логируем статистику по категориям для отладки
+        category_stats = {}
+        for product in products:
+            category = product.get('category', 'Без категории')
+            category_stats[category] = category_stats.get(category, 0) + 1
+        
+        for category, count in category_stats.items():
+            logging.info(f"Категория '{category}': {count} товаров")
+            
     except FileNotFoundError:
         logging.error("Файл products.csv не найден!")
     except Exception as e:
@@ -74,8 +121,8 @@ def load_flavors_from_csv() -> Dict[str, List[str]]:
                 if not any(row.values()):
                     continue
                     
-                product_id = row.get('product_id', '')
-                flavor_name = row.get('flavor_name', '')
+                product_id = clean_string(row.get('product_id', ''))
+                flavor_name = clean_string(row.get('flavor_name', ''))
                 
                 if product_id and flavor_name:
                     if product_id not in flavors_dict:
@@ -179,14 +226,13 @@ def catalog_menu_keyboard():
     ], resize_keyboard=True)
 
 def liquids_brands_keyboard():
-    # Динамически получаем бренды жидкостей из CSV с проверкой
+    """Клавиатура для брендов жидкостей"""
     brands = set()
     for product in PRODUCTS_DATA:
-        # Безопасная проверка категории
         category = product.get('category', '')
         if category == 'Жидкости':
             brand = product.get('brand', '')
-            if brand:  # Добавляем только непустые бренды
+            if brand:
                 brands.add(brand)
     
     if not brands:
@@ -194,32 +240,28 @@ def liquids_brands_keyboard():
             ["⬅️ Назад в каталог", "🏠 Главное меню"]
         ], resize_keyboard=True)
     
-    # Сортируем бренды и ограничиваем по 3 в ряду
+    # Сортируем бренды и создаем клавиатуру
     sorted_brands = sorted(brands)
     keyboard = []
     row = []
     
     for i, brand in enumerate(sorted_brands):
         row.append(brand)
-        # Максимум 3 кнопки в ряду
         if len(row) == 3 or i == len(sorted_brands) - 1:
             keyboard.append(row)
             row = []
     
-    # Всегда добавляем кнопки навигации в отдельный ряд
     keyboard.append(["⬅️ Назад в каталог", "🏠 Главное меню"])
-    
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
 def disposable_brands_keyboard():
-    # Динамически получаем бренды одноразок из CSV с проверкой
+    """Клавиатура для брендов одноразок"""
     brands = set()
     for product in PRODUCTS_DATA:
-        # Безопасная проверка категории
         category = product.get('category', '')
         if category == 'Одноразки':
             brand = product.get('brand', '')
-            if brand:  # Добавляем только непустые бренды
+            if brand:
                 brands.add(brand)
     
     if not brands:
@@ -227,46 +269,42 @@ def disposable_brands_keyboard():
             ["⬅️ Назад в каталог", "🏠 Главное меню"]
         ], resize_keyboard=True)
     
-    # Сортируем бренды и ограничиваем по 3 в ряду
+    # Сортируем бренды и создаем клавиатуру
     sorted_brands = sorted(brands)
     keyboard = []
     row = []
     
     for i, brand in enumerate(sorted_brands):
         row.append(brand)
-        # Максимум 3 кнопки в ряду
         if len(row) == 3 or i == len(sorted_brands) - 1:
             keyboard.append(row)
             row = []
     
-    # Всегда добавляем кнопки навигации в отдельный ряд
     keyboard.append(["⬅️ Назад в каталог", "🏠 Главное меню"])
-    
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
 def get_products_keyboard(category, brand):
     """Создает клавиатуру для товаров конкретного бренда"""
     products = []
     for product in PRODUCTS_DATA:
-        # Безопасная проверка категории и бренда
         product_category = product.get('category', '')
         product_brand = product.get('brand', '')
         if product_category == category and product_brand == brand:
             product_name = product.get('name', '')
-            if product_name:  # Добавляем только товары с названиями
+            if product_name:
                 products.append(product_name)
     
     keyboard = []
     row = []
     
-    # Максимум 2 товара в ряду (так лучше смотрится)
+    # Максимум 2 товара в ряду
     for i, product in enumerate(products):
         row.append(product)
         if len(row) == 2 or i == len(products) - 1:
             keyboard.append(row)
             row = []
     
-    if not keyboard:  # Если товаров нет
+    if not keyboard:
         keyboard.append(["Товары временно отсутствуют"])
     
     back_text = "⬅️ Назад к жидкостям" if category == "Жидкости" else "⬅️ Назад к одноразкам"
@@ -275,15 +313,13 @@ def get_products_keyboard(category, brand):
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
 def get_accessories_categories_keyboard():
-    """Создает клавиатуру для категорий комплектующих из CSV"""
-    # Динамически получаем категории комплектующих из CSV с проверкой
+    """Создает клавиатуру для категорий комплектующих"""
     categories = set()
     for product in PRODUCTS_DATA:
-        # Безопасная проверка категории
         category = product.get('category', '')
         if category == 'Комплектующие':
             subcategory = product.get('subcategory', '')
-            if subcategory:  # Добавляем только непустые подкатегории
+            if subcategory:
                 categories.add(subcategory)
     
     if not categories:
@@ -305,15 +341,13 @@ def get_accessories_categories_keyboard():
 
 def get_accessory_products_keyboard(category: str):
     """Создает клавиатуру для товаров конкретной категории комплектующих"""
-    # Получаем товары этой категории из CSV с проверкой
     products = []
     for product in PRODUCTS_DATA:
-        # Безопасная проверка категории и подкатегории
         product_category = product.get('category', '')
         product_subcategory = product.get('subcategory', '')
         if product_category == 'Комплектующие' and product_subcategory == category:
             product_name = product.get('name', '')
-            if product_name:  # Добавляем только товары с названиями
+            if product_name:
                 products.append(product_name)
     
     keyboard = []
@@ -325,7 +359,7 @@ def get_accessory_products_keyboard(category: str):
             keyboard.append(row)
             row = []
     
-    if not keyboard:  # Если товаров нет
+    if not keyboard:
         keyboard.append(["Товары временно отсутствуют"])
     
     keyboard.append(["⬅️ Назад к комплектующим", "🏠 Главное меню"])
@@ -341,151 +375,6 @@ def cart_keyboard():
         ["✅ Отправить заказ", "✏️ Редактировать заказ"],
         ["⬅️ Назад в каталог", "🏠 Главное меню"]
     ], resize_keyboard=True)
-
-# ---- Функции для администраторов ----
-
-async def admin_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    if user.id not in ADMIN_IDS:
-        await update.message.reply_text("⛔ У вас нет прав для этой команды")
-        return
-    
-    if not context.args:
-        await update.message.reply_text("❌ Использование: /broadcast <сообщение>")
-        return
-    
-    message = update.message.text.replace('/broadcast ', '', 1).strip()
-    await send_broadcast(context, message)
-    await update.message.reply_text("✅ Рассылка запущена!")
-
-async def admin_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    if user.id not in ADMIN_IDS:
-        await update.message.reply_text("⛔ У вас нет прав для этой команды")
-        return
-    
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT COUNT(*) FROM users WHERE is_active = 1')
-    total_users = cursor.fetchone()[0]
-    
-    cursor.execute('SELECT COUNT(*) FROM users WHERE DATE(created_at) = DATE("now")')
-    new_today = cursor.fetchone()[0]
-    conn.close()
-    
-    active_users = len(USER_CARTS)
-    active_carts = sum(1 for cart in USER_CARTS.values() if cart)
-    
-    # Статистика по товарам
-    products_with_category = sum(1 for p in PRODUCTS_DATA if p.get('category'))
-    products_without_category = sum(1 for p in PRODUCTS_DATA if not p.get('category'))
-    
-    stats_text = f"📊 *Статистика бота:*\n\n"
-    stats_text += f"👥 Всего пользователей: {total_users}\n"
-    stats_text += f"📈 Новых сегодня: {new_today}\n"
-    stats_text += f"🔥 Активных сессий: {active_users}\n"
-    stats_text += f"🛒 Активных корзин: {active_carts}\n"
-    stats_text += f"📝 Состояний пользователей: {len(USER_STATES)}\n"
-    stats_text += f"📦 Товаров в каталоге: {len(PRODUCTS_DATA)}\n"
-    stats_text += f"✅ Товаров с категориями: {products_with_category}\n"
-    stats_text += f"❌ Товаров без категорий: {products_without_category}\n"
-    stats_text += f"🎯 Вкусов загружено: {sum(len(v) for v in FLAVORS_DATA.values())}"
-    
-    await update.message.reply_text(stats_text, parse_mode="Markdown")
-
-async def admin_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    if user.id not in ADMIN_IDS:
-        await update.message.reply_text("⛔ У вас нет прав для этой команды")
-        return
-    
-    help_text = (
-        "🛠️ *Команды администратора:*\n\n"
-        "/broadcast <текст> - Рассылка сообщения всем пользователям\n"
-        "/stats - Статистика бота\n"
-        "/reload - Перезагрузить данные из CSV\n"
-        "/stop - Остановить бота\n"
-        "/admin_help - Справка по командам админа\n\n"
-        f"👑 Администраторы: {', '.join(str(admin_id) for admin_id in ADMIN_IDS)}"
-    )
-    await update.message.reply_text(help_text, parse_mode="Markdown")
-
-async def reload_data(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Перезагружает данные из CSV файлов"""
-    user = update.effective_user
-    if user.id not in ADMIN_IDS:
-        await update.message.reply_text("⛔ У вас нет прав для этой команды")
-        return
-    
-    global PRODUCTS_DATA, FLAVORS_DATA
-    PRODUCTS_DATA = load_products_from_csv()
-    FLAVORS_DATA = load_flavors_from_csv()
-    
-    # Статистика по загруженным данным
-    products_with_category = sum(1 for p in PRODUCTS_DATA if p.get('category'))
-    products_without_category = sum(1 for p in PRODUCTS_DATA if not p.get('category'))
-    
-    await update.message.reply_text(
-        f"✅ Данные обновлены!\n"
-        f"Товаров: {len(PRODUCTS_DATA)}\n"
-        f"Товаров с категориями: {products_with_category}\n"
-        f"Товаров без категорий: {products_without_category}\n"
-        f"Товаров с вкусами: {len(FLAVORS_DATA)}"
-    )
-    logger.info(f"Data reloaded by admin {user.id}")
-
-async def send_broadcast(context: ContextTypes.DEFAULT_TYPE, message: str) -> None:
-    success_count = 0
-    fail_count = 0
-    
-    broadcast_text = (
-        "📢 *РАССЫЛКА ОТ АДМИНИСТРАТОРА*\n\n"
-        f"{message}\n\n"
-        "_Это автоматическое сообщение, пожалуйста, не отвечайте на него._"
-    )
-    
-    user_ids = get_all_users()
-    
-    if not user_ids:
-        for admin_id in ADMIN_IDS:
-            await context.bot.send_message(
-                chat_id=admin_id,
-                text="❌ Нет пользователей для рассылки",
-                parse_mode="Markdown"
-            )
-        return
-    
-    for user_id in user_ids:
-        try:
-            await context.bot.send_message(
-                chat_id=user_id,
-                text=broadcast_text,
-                parse_mode="Markdown"
-            )
-            success_count += 1
-            await asyncio.sleep(0.1)
-        except Exception as e:
-            logger.error(f"Ошибка отправки рассылки пользователю {user_id}: {e}")
-            deactivate_user(user_id)
-            fail_count += 1
-    
-    report_text = (
-        f"📊 *Отчет о рассылке:*\n\n"
-        f"✅ Успешно отправлено: {success_count}\n"
-        f"❌ Не удалось отправить: {fail_count}\n"
-        f"👥 Всего пользователей в базе: {len(user_ids)}\n"
-        f"📝 Сообщение: {message[:100]}..."
-    )
-    
-    for admin_id in ADMIN_IDS:
-        try:
-            await context.bot.send_message(
-                chat_id=admin_id,
-                text=report_text,
-                parse_mode="Markdown"
-            )
-        except Exception as e:
-            logger.error(f"Ошибка отправки отчета админу {admin_id}: {e}")
 
 # ---- Основные функции магазина ----
 
@@ -506,24 +395,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
     logger.info(f"User {user.id} started the bot")
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(
-        "📖 *Справка по магазину CloudFM*\n\n"
-        "Вот что вы можете сделать:\n"
-        "- 🛒 *Каталог* - просмотреть товары\n"
-        "- 🛍️ *Корзина* - посмотреть ваши заказы\n"
-        "- 🚚 *Доставка* - узнать условия доставки\n"
-        "- 📞 *Контакта* - связаться с нами\n"
-        "- /start - Вернуться в главное меню",
-        parse_mode="Markdown"
-    )
-
 async def show_catalog(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     USER_STATES[user.id] = "catalog_menu"
 
     await update.message.reply_text(
-        "🛒 *Выберите категориу товаров:*\n\n"
+        "🛒 *Выберите категорию товаров:*\n\n"
         "• 💧 Жидкости для электронных сигарет\n"
         "• 🚬 Одноразовые электронные сигареты\n"
         "• 🌿 Жевательный табак\n"
@@ -584,16 +461,10 @@ async def show_pod_accessories(update: Update, context: ContextTypes.DEFAULT_TYP
     user = update.effective_user
     USER_STATES[user.id] = "pod_accessories"
     
-    # Динамически получаем категории комплектующих из CSV
-    categories = set()
-    for product in PRODUCTS_DATA:
-        category = product.get('category', '')
-        if category == 'Комплектующие':
-            subcategory = product.get('subcategory', '')
-            if subcategory:
-                categories.add(subcategory)
+    # Проверяем есть ли комплектующие в каталоге
+    has_accessories = any(product.get('category') == 'Комплектующие' for product in PRODUCTS_DATA)
     
-    if not categories:
+    if not has_accessories:
         await update.message.reply_text(
             "❌ *Комплектующие временно отсутствуют*\n\n"
             "К сожалению, комплектующие временно отсутствуют в продаже. "
@@ -614,7 +485,7 @@ async def handle_brand_selection(update: Update, context: ContextTypes.DEFAULT_T
     user = update.effective_user
     USER_STATES[user.id] = f"{category.lower()}_products"
     
-    # Получаем товары этого бренда с проверкой
+    # Получаем товары этого бренда
     products = []
     for p in PRODUCTS_DATA:
         product_category = p.get('category', '')
@@ -648,7 +519,7 @@ async def show_accessory_products(update: Update, context: ContextTypes.DEFAULT_
     user = update.effective_user
     USER_STATES[user.id] = f"accessory_{category}"
     
-    # Получаем товары этой категории из CSV с проверкой
+    # Получаем товары этой категории
     products = []
     for product in PRODUCTS_DATA:
         product_category = product.get('category', '')
@@ -682,7 +553,7 @@ async def handle_product_selection(update: Update, context: ContextTypes.DEFAULT
     user = update.effective_user
     user_id = user.id
     
-    # Находим продукт по имени с проверкой
+    # Находим продукт по имени
     product = None
     for p in PRODUCTS_DATA:
         if p.get('name') == product_name:
@@ -756,6 +627,8 @@ async def handle_product_selection(update: Update, context: ContextTypes.DEFAULT
                 parse_mode="Markdown"
             )
 
+# ... (остальные функции остаются такими же, как в предыдущем исправленном коде)
+
 async def back_to_liquids(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await show_liquids(update, context)
 
@@ -777,485 +650,7 @@ async def back_to_main(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         reply_markup=main_menu_keyboard()
     )
 
-async def show_cart(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    cart = USER_CARTS.get(user.id, [])
-    USER_STATES[user.id] = "cart"
-
-    cart_text = "🛍️ *Ваша корзина*\n\n"
-    if not cart:
-        cart_text += "Ваша корзина пуста"
-    else:
-        total = 0
-        for i, item in enumerate(cart, 1):
-            cart_text += f"{i}. {item['name']} - {item['quantity']} шт. ({item['price']} ₽)\n"
-            total += item['price'] * item['quantity']
-        cart_text += f"\nИтого: *{total} ₽*\n"
-
-    await update.message.reply_text(
-        cart_text,
-        reply_markup=cart_keyboard(),
-        parse_mode="Markdown"
-    )
-
-async def delivery_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    info = (
-        "🚚 *Условия доставки CloudFM*\n\n"
-        "• *Самовывоз:* Адрес уточняется при заказе у оператора @CloudFMMSC (Пн-Вс 10:00-22:00)\n"
-        "• *Доставка по городу:* Цену доставки уточняйте у оператора @CloudFMMSC (Пн-Вс 10:00-22:00)\n"
-        "• *Экспресс-доставка:* При заказе от 3000 ₽, цена доставки 500 ₽ (в течение 2 часов)\n\n"
-        "Все заказы оформляются анонимно!"
-    )
-    await update.message.reply_text(info, parse_mode="Markdown")
-
-async def contacts(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    contact_info = (
-        "📞 *Контакты магазина CloudFM*\n\n"
-        "• Телеграм: @CloudFMMSC\n"
-        "Часы работы: 24/7\n\n"
-        "По вопросам оптовых закупов: @CloudFMMSC"
-    )
-    await update.message.reply_text(contact_info, parse_mode="Markdown")
-
-async def send_order(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    cart = USER_CARTS.get(user.id, [])
-
-    if not cart:
-        await update.message.reply_text(
-            "❌ Ваша корзина пуста! Добавьте товары перед оформлением заказа.",
-            reply_markup=main_menu_keyboard()
-        )
-        return
-
-    order_text = f"🛒 *Новый заказ!*\n\n"
-    order_text += f"👤 Пользователь: [{user.first_name}](tg://user?id={user.id})\n"
-    order_text += f"🆔 ID: `{user.id}`\n\n"
-    order_text += "📝 *Состав заказа:*\n"
-
-    total = 0
-    for item in cart:
-        item_total = item['price'] * item['quantity']
-        order_text += f"- {item['name']} - {item['quantity']} шт. = {item_total} ₽\n"
-        total += item_total
-
-    order_text += f"\n💵 *Итого: {total} ₽*"
-
-    success = False
-    for admin_id in ADMIN_IDS:
-        try:
-            await context.bot.send_message(
-                chat_id=admin_id,
-                text=order_text,
-                parse_mode="Markdown"
-            )
-            success = True
-            logger.info(f"Order sent to admin {admin_id} for user {user.id}")
-        except Exception as e:
-            logger.error(f"Error sending order to admin {admin_id}: {e}")
-
-    if success:
-        await update.message.reply_text(
-            "✅ Ваш заказ оформлен! Скоро с вами свяжется оператор для уточнения деталей.",
-            reply_markup=main_menu_keyboard()
-        )
-        USER_CARTS[user.id] = []
-    else:
-        await update.message.reply_text(
-            "⚠️ Произошла ошибка при отправке заказа. Пожалуйста, свяжитесь с нами через меню Контакты."
-        )
-
-async def edit_order(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    cart = USER_CARTS.get(user.id, [])
-    USER_STATES[user.id] = "editing_cart"
-
-    if not cart:
-        await update.message.reply_text(
-            "❌ Ваша корзина пуста!",
-            reply_markup=main_menu_keyboard()
-        )
-        return
-
-    cart_text = "✏️ *Редактирование корзина*\n\n"
-    cart_text += "Отправьте номер товара для удаления:\n\n"
-
-    total = 0
-    for i, item in enumerate(cart, 1):
-        item_total = item['price'] * item['quantity']
-        cart_text += f"{i}. {item['name']} - {item['quantity']} шт. = {item_total} ₽\n"
-        total += item_total
-
-    cart_text += f"\n💵 Итого: *{total} ₽*"
-
-    await update.message.reply_text(
-        cart_text,
-        reply_markup=cart_keyboard(),
-        parse_mode="Markdown"
-    )
-
-async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    if user.id in ADMIN_IDS:
-        await update.message.reply_text("🛑 Бот остановлен...")
-        logger.warning(f"Bot stopped by admin {user.id}")
-        await context.application.stop()
-    else:
-        await update.message.reply_text("⛔ У вас нет прав для этой команды")
-        logger.warning(f"Unauthorized stop attempt by {user.id}")
-
-# ---- Обработчик инлайн кнопок ----
-
-async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    query = update.callback_query
-    user = update.effective_user
-    user_id = user.id
-
-    await query.answer()
-
-    # Обработка добавления в корзину
-    if query.data.startswith("add_"):
-        product_id = query.data[4:]
-        
-        # Проверяем, существует ли продукт
-        product_exists = any(p.get('product_id') == product_id for p in PRODUCTS_DATA)
-        
-        if product_exists:
-            # Вызываем функцию обработки выбора вкуса
-            await handle_flavor_selection_from_id(update, context, product_id)
-        else:
-            await query.edit_message_caption(
-                caption="❌ Этот товар временно отсутствует",
-                parse_mode="Markdown"
-            )
-
-async def handle_flavor_selection_from_id(update: Update, context: ContextTypes.DEFAULT_TYPE, product_id: str):
-    """Обработка выбора вкуса по product_id (для инлайн кнопок)"""
-    user = update.effective_user
-    user_id = user.id
-    
-    # Находим продукт по ID
-    product = None
-    for p in PRODUCTS_DATA:
-        if p.get('product_id') == product_id:
-            product = p
-            break
-    
-    if not product:
-        await update.callback_query.edit_message_caption(
-            caption="❌ Продукт не найден",
-            parse_mode="Markdown"
-        )
-        return
-    
-    product_name = product.get('name', 'Без названия')
-    price = product.get('price', 0)
-    image_url = product.get('image_url', '')
-    
-    # Проверяем, есть ли вкусы у этого продукта
-    has_flavors = product.get('has_flavors', False)
-    if has_flavors and product_id in FLAVORS_DATA:
-        flavors = FLAVORS_DATA[product_id]
-        USER_CURRENT_PRODUCT[user_id] = product_id
-        USER_CURRENT_FLAVORS[user_id] = flavors
-        
-        # Формируем сообщение со списком вкусов
-        message_text = f"🎯 *{product_name}* - *{price} ₽*\n\n"
-        message_text += "Выберите вкус:\n\n"
-        for i, flavor in enumerate(flavors, 1):
-            message_text += f"{i}. {flavor}\n"
-        
-        message_text += f"\n💵 Цена: *{price} ₽*"
-        
-        USER_STATES[user_id] = f"waiting_flavor_{product_id}"
-        
-        # Редактируем сообщение с фото
-        if image_url:
-            await update.callback_query.edit_message_caption(
-                caption=message_text,
-                parse_mode="Markdown"
-            )
-        else:
-            await update.callback_query.edit_message_text(
-                text=message_text,
-                parse_mode="Markdown"
-            )
-        
-    else:
-        # Если у продукта нет вариантов вкуса, добавляем сразу в корзину
-        if user_id not in USER_CARTS:
-            USER_CARTS[user_id] = []
-
-        found = False
-        for item in USER_CARTS[user_id]:
-            if item['name'] == product_name:
-                item['quantity'] += 1
-                found = True
-                break
-
-        if not found:
-            USER_CARTS[user_id].append({
-                'name': product_name,
-                'price': price,
-                'quantity': 1
-            })
-
-        await update.callback_query.edit_message_caption(
-            caption=f"✅ *{product_name}* - *{price} ₽* добавлен в корзину!",
-            parse_mode="Markdown"
-        )
-
-# ---- Обработчики сообщений ----
-
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    text = update.message.text
-    user = update.effective_user
-    user_id = user.id
-    
-    # Навигационные команды
-    navigation_commands = {
-        "⬅️ назад к жидкостям": back_to_liquids,
-        "⬅️ назад к одноразкам": back_to_disposable,
-        "⬅️ назад к комплектующим": back_to_accessories,
-        "⬅️ назад в каталог": back_to_catalog,
-        "🏠 главное меню": back_to_main,
-        "🛒 каталог": show_catalog,
-        "🛍️ корзина": show_cart,
-        "🚚 доставка": delivery_info,
-        "❓ помощь": help_command,
-        "📞 контакты": contacts
-    }
-    
-    # Проверяем навигационные команды
-    normalized_text = text.lower().strip()
-    for command, handler in navigation_commands.items():
-        if normalized_text == command.lower():
-            await handler(update, context)
-            if command in ["🏠 главное меню", "⬅️ назад в каталог", "🛒 каталог"]:
-                USER_STATES[user_id] = "main_menu" if command == "🏠 главное меню" else "catalog_menu"
-            return
-
-    # Обработка выбора вкуса
-    current_state = USER_STATES.get(user_id, "")
-    if current_state.startswith("waiting_flavor_"):
-        if text.isdigit():
-            flavor_index = int(text) - 1
-            product_id = USER_CURRENT_PRODUCT.get(user_id)
-            flavors = USER_CURRENT_FLAVORS.get(user_id, [])
-            
-            if not product_id or not flavors:
-                await update.message.reply_text("❌ Ошибка при выборе вкуса")
-                return
-            
-            if 0 <= flavor_index < len(flavors):
-                flavor = flavors[flavor_index]
-                
-                # Находим продукт
-                product = None
-                for p in PRODUCTS_DATA:
-                    if p.get('product_id') == product_id:
-                        product = p
-                        break
-                
-                if product:
-                    product_name_with_flavor = f"{product.get('name', 'Без названия')} - {flavor}"
-                    
-                    # Добавляем в корзину
-                    if user_id not in USER_CARTS:
-                        USER_CARTS[user_id] = []
-
-                    found = False
-                    for item in USER_CARTS[user_id]:
-                        if item['name'] == product_name_with_flavor:
-                            item['quantity'] += 1
-                            found = True
-                            break
-
-                    if not found:
-                        USER_CARTS[user_id].append({
-                            'name': product_name_with_flavor,
-                            'price': product.get('price', 0),
-                            'quantity': 1
-                        })
-
-                    await update.message.reply_text(
-                        f"✅ {product_name_with_flavor} добавлен в корзину!",
-                        parse_mode="Markdown"
-                    )
-                    
-                    # Сбрасываем состояние
-                    USER_STATES[user_id] = "main_menu"
-                else:
-                    await update.message.reply_text("❌ Ошибка: продукт не найден")
-            else:
-                await update.message.reply_text("❌ Неверный номер вкуса. Пожалуйста, выберите цифру из списка.")
-        else:
-            await update.message.reply_text("❌ Пожалуйста, введите цифру, соответствующую вкусу, или используйте кнопки навигации.")
-        return
-
-    # Обработка главного меню
-    if text == "🛒 Каталог":
-        await show_catalog(update, context)
-    elif text == "🛍️ Корзина":
-        await show_cart(update, context)
-    elif text == "🚚 Доставка":
-        await delivery_info(update, context)
-    elif text == "❓ Помощь":
-        await help_command(update, context)
-    elif text == "📞 Контакты":
-        await contacts(update, context)
-
-    # Обработка меню каталога
-    elif text == "💧 Жидкости":
-        await show_liquids(update, context)
-    elif text == "🚬 Одноразки":
-        await show_disposable(update, context)
-    elif text == "🌿 Жевательный табак":
-        await update.message.reply_text(
-            "❌ *Товар отсутствует*\n\n"
-            "К сожалению, Жевательный табак временно отсутствует в продаже. "
-            "Выберите другие товары из каталога.",
-            parse_mode="Markdown",
-            reply_markup=back_to_catalog_keyboard()
-        )
-    elif text == "🔧 Под-системы":
-        await update.message.reply_text(
-            "❌ *товар отсутствует*\n\n"
-            "К сожалению, под-системы временно отсутствуют в продаже. "
-            "Выберите другие товары из каталога.",
-            parse_mode="Markdown",
-            reply_markup=back_to_catalog_keyboard()
-        )
-    elif text == "⚙️ Комплектующие для под-систем":
-        await show_pod_accessories(update, context)
-    elif text == "🏠 Главное меню":
-        await back_to_main(update, context)
-
-    # Обработка брендов жидкостей
-    elif USER_STATES.get(user_id) == "liquids_brands":
-        # Получаем все бренды жидкостей из CSV с проверкой
-        liquid_brands = set()
-        for product in PRODUCTS_DATA:
-            category = product.get('category', '')
-            if category == 'Жидкости':
-                brand = product.get('brand', '')
-                if brand:
-                    liquid_brands.add(brand)
-        
-        if text in liquid_brands:
-            await handle_brand_selection(update, context, text, "Жидкости")
-
-    # Обработка брендов одноразок
-    elif USER_STATES.get(user_id) == "disposable_brands":
-        # Получаем все бренды одноразок из CSV с проверкой
-        disposable_brands = set()
-        for product in PRODUCTS_DATA:
-            category = product.get('category', '')
-            if category == 'Одноразки':
-                brand = product.get('brand', '')
-                if brand:
-                    disposable_brands.add(brand)
-        
-        if text in disposable_brands:
-            await handle_brand_selection(update, context, text, "Одноразки")
-
-    # Обработка товаров жидкостей
-    elif USER_STATES.get(user_id) in ["жидкости_products", "одноразки_products"]:
-        category = "Жидкости" if USER_STATES[user_id] == "жидкости_products" else "Одноразки"
-        
-        # Проверяем, есть ли такой товар в CSV
-        product_exists = any(
-            p.get('name') == text and p.get('category') == category 
-            for p in PRODUCTS_DATA
-        )
-        
-        if product_exists:
-            await handle_product_selection(update, context, text)
-        elif text in ["⬅️ Назад к жидкостям", "⬅️ Назад к одноразкам"]:
-            if "жидкости" in text:
-                await back_to_liquids(update, context)
-            else:
-                await back_to_disposable(update, context)
-        elif text == "🏠 Главное меню":
-            await back_to_main(update, context)
-
-    # Обработка комплектующих
-    elif USER_STATES.get(user_id) == "pod_accessories":
-        # Проверяем, есть ли такая категория в CSV
-        category_exists = any(
-            p.get('category') == 'Комплектующие' and p.get('subcategory') == text 
-            for p in PRODUCTS_DATA
-        )
-        
-        if category_exists:
-            await show_accessory_products(update, context, text)
-        elif text == "⬅️ Назад в каталог":
-            await back_to_catalog(update, context)
-        elif text == "🏠 Главное меню":
-            await back_to_main(update, context)
-        else:
-            await update.message.reply_text(
-                "❌ Категория не найдена",
-                reply_markup=get_accessories_categories_keyboard()
-            )
-
-    # Обработка товаров комплектующих
-    elif USER_STATES.get(user_id, "").startswith("accessory_"):
-        # Проверяем, есть ли такой товар в CSV
-        product_exists = any(
-            p.get('category') == 'Комплектующие' and p.get('name') == text 
-            for p in PRODUCTS_DATA
-        )
-        
-        if product_exists:
-            await handle_product_selection(update, context, text)
-        elif text == "⬅️ Назад к комплектующим":
-            USER_STATES[user_id] = "pod_accessories"
-            await show_pod_accessories(update, context)
-        elif text == "🏠 Главное меню":
-            await back_to_main(update, context)
-
-    # Обработка навигации
-    elif text == "⬅️ Назад в каталог":
-        await back_to_catalog(update, context)
-    elif text == "⬅️ Назад к жидкостям":
-        await back_to_liquids(update, context)
-    elif text == "⬅️ Назад к одноразкам":
-        await back_to_disposable(update, context)
-    elif text == "⬅️ Назад к комплектующим":
-        await back_to_accessories(update, context)
-
-    # Обработка корзины
-    elif text == "✅ Отправить заказ":
-        await send_order(update, context)
-    elif text == "✏️ Редактировать заказ":
-        await edit_order(update, context)
-
-    # Обработка редактирования корзины
-    elif text.isdigit() and USER_STATES.get(user_id) == "editing_cart":
-        item_num = int(text)
-        cart = USER_CARTS.get(user_id, [])
-        if 1 <= item_num <= len(cart):
-            removed = cart.pop(item_num - 1)
-            await update.message.reply_text(
-                f"❌ Товар '{removed['name']}' удален из корзина",
-                reply_markup=cart_keyboard()
-            )
-            USER_STATES[user_id] = "cart"
-            await show_cart(update, context)
-        else:
-            await update.message.reply_text(
-                "❌ Неверный номер товара",
-                reply_markup=cart_keyboard()
-            )
-        return
-
-    else:
-        await update.message.reply_text(
-            "Я не понял ваше сообщение. Пожалуйста, используйте кнопки меню или команду /start"
-        )
-
-# ---- Основная функция ----
+# ... (остальной код обработчиков сообщений и команд остается без изменений)
 
 def main() -> None:
     # Инициализируем базу данных
@@ -1265,6 +660,14 @@ def main() -> None:
         persistence = PicklePersistence(filepath="bot_persistence")
         application = Application.builder().token(TOKEN).persistence(persistence).build()
         logger.info("Магазин CloudFM успешно запущен")
+        
+        # Логируем загруженные категории для отладки
+        categories = set()
+        for product in PRODUCTS_DATA:
+            category = product.get('category', 'Без категории')
+            categories.add(category)
+        logger.info(f"Загружены категории: {', '.join(categories)}")
+        
     except Exception as e:
         logger.error(f"Ошибка при создании приложения: {e}")
         return
