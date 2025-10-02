@@ -441,6 +441,28 @@ async def show_disposable(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         parse_mode="Markdown"
     )
 
+async def show_pod_accessories(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    USER_STATES[user.id] = "pod_accessories"
+
+    await update.message.reply_text(
+        "⚙️ *Комплектующие для под-систем:*\n\n"
+        "Выберите категорию комплектующих:",
+        reply_markup=pod_accessories_keyboard(),
+        parse_mode="Markdown"
+    )
+
+async def show_cartridges(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    USER_STATES[user.id] = "cartridges"
+
+    await update.message.reply_text(
+        "🔧 *Картриджы для под-систем:*\n\n"
+        "Выберите тип картриджа:",
+        reply_markup=cartridges_keyboard(),
+        parse_mode="Markdown"
+    )
+
 async def handle_brand_selection(update: Update, context: ContextTypes.DEFAULT_TYPE, brand: str, category: str) -> None:
     user = update.effective_user
     USER_STATES[user.id] = f"{category.lower()}_products"
@@ -799,6 +821,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     text = update.message.text
     user = update.effective_user
     user_id = user.id
+
+    logger.info(f"=== ОБРАБОТКА СООБЩЕНИЯ ===")
+    logger.info(f"Пользователь: {user_id}")
+    logger.info(f"Текст: '{text}'")
+    logger.info(f"Текущее состояние: {USER_STATES.get(user_id, 'не установлено')}")
     
     # Навигационные команды
     navigation_commands = {
@@ -1063,4 +1090,5 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
 
