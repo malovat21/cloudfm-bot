@@ -569,6 +569,28 @@ async def back_to_liquids(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 async def back_to_disposable(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await show_disposable(update, context)
 
+async def show_pod_accessories(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    USER_STATES[user.id] = "pod_accessories"
+
+    await update.message.reply_text(
+        "⚙️ *Комплектующие для под-систем:*\n\n"
+        "Выберите категорию комплектующих:",
+        reply_markup=pod_accessories_keyboard(),
+        parse_mode="Markdown"
+    )
+
+async def show_cartridges(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    USER_STATES[user.id] = "cartridges"
+
+    await update.message.reply_text(
+        "🔧 *Картриджы для под-систем:*\n\n"
+        "Выберите тип картриджа:",
+        reply_markup=cartridges_keyboard(),
+        parse_mode="Markdown"
+    )
+
 async def back_to_accessories(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await show_pod_accessories(update, context)
 
@@ -1081,3 +1103,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
